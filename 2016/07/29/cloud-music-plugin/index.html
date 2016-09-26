@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>突破网易云音乐播放列表1000限制 | Fantacity</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="笔者是网易云音乐的忠实粉丝，从14年使用至今。最喜欢的还是云音乐的评论功能，总能找到一些有趣的评论，总能找到一些喜欢同一首歌的知音。不过云音乐有一个不知道是不是有意为之的缺点，当前播放列表的大小被限制在了1000以内。像笔者这种听到喜欢的歌就点红心的人，收藏的歌单列表早就超过了1000首，这意为着每次都只能听到最近收藏的1000首歌，之前的歌如果想要听到的话，还要自己手动往前翻歌单，小心翼翼添加到">
+<meta property="og:type" content="article">
+<meta property="og:title" content="突破网易云音乐播放列表1000限制">
+<meta property="og:url" content="http://yosef-gao.github.io/2016/07/29/cloud-music-plugin/index.html">
+<meta property="og:site_name" content="Fantacity">
+<meta property="og:description" content="笔者是网易云音乐的忠实粉丝，从14年使用至今。最喜欢的还是云音乐的评论功能，总能找到一些有趣的评论，总能找到一些喜欢同一首歌的知音。不过云音乐有一个不知道是不是有意为之的缺点，当前播放列表的大小被限制在了1000以内。像笔者这种听到喜欢的歌就点红心的人，收藏的歌单列表早就超过了1000首，这意为着每次都只能听到最近收藏的1000首歌，之前的歌如果想要听到的话，还要自己手动往前翻歌单，小心翼翼添加到">
+<meta property="og:image" content="http://yosef-gao.github.io/2016/07/29/cloud-music-plugin/1.jpg">
+<meta property="og:image" content="http://yosef-gao.github.io/2016/07/29/cloud-music-plugin/2.jpg">
+<meta property="og:image" content="http://yosef-gao.github.io/2016/07/29/cloud-music-plugin/steps.png">
+<meta property="og:image" content="http://yosef-gao.github.io/2016/07/29/cloud-music-plugin/spy++.jpg">
+<meta property="og:image" content="http://yosef-gao.github.io/2016/07/29/cloud-music-plugin/tree.jpg">
+<meta property="og:image" content="http://yosef-gao.github.io/2016/07/29/cloud-music-plugin/messages.jpg">
+<meta property="og:updated_time" content="2016-09-26T04:22:45.079Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="突破网易云音乐播放列表1000限制">
+<meta name="twitter:description" content="笔者是网易云音乐的忠实粉丝，从14年使用至今。最喜欢的还是云音乐的评论功能，总能找到一些有趣的评论，总能找到一些喜欢同一首歌的知音。不过云音乐有一个不知道是不是有意为之的缺点，当前播放列表的大小被限制在了1000以内。像笔者这种听到喜欢的歌就点红心的人，收藏的歌单列表早就超过了1000首，这意为着每次都只能听到最近收藏的1000首歌，之前的歌如果想要听到的话，还要自己手动往前翻歌单，小心翼翼添加到">
+<meta name="twitter:image" content="http://yosef-gao.github.io/2016/07/29/cloud-music-plugin/1.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="Fantacity" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="https://github.com/yosef-gao">Github</a></li>
+        
+          <li><a class=""
+                 href="/about/aboutme.html">About Me</a></li>
+        
+          <li><a class=""
+                 href="/Links/index.html">Links</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+          <li><a href="/atom.xml" title="RSS Feed"><i class="fa fa-rss"></i></a></li>
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">Fantacity</h1>
+  
+    <p class="lead blog-description">Stand Alone Complex</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-8 blog-main">
+          <article id="post-cloud-music-plugin" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      突破网易云音乐播放列表1000限制
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2016/07/29/cloud-music-plugin/" class="article-date"><time datetime="2016-07-29T06:21:47.000Z" itemprop="datePublished">2016-07-29</time></a>
+</div>
+
+    <div class="article-author">yosef gao</div>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Program/">Program</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>笔者是网易云音乐的忠实粉丝，从14年使用至今。最喜欢的还是云音乐的评论功能，总能找到一些有趣的评论，总能找到一些喜欢同一首歌的知音。不过云音乐有一个不知道是不是有意为之的缺点，当前播放列表的大小被限制在了1000以内。像笔者这种听到喜欢的歌就点红心的人，收藏的歌单列表早就超过了1000首，这意为着每次都只能听到最近收藏的1000首歌，之前的歌如果想要听到的话，还要自己手动往前翻歌单，小心翼翼添加到播放列表，防止超出1000首，很麻烦！<br><a id="more"></a><br>笔者也曾多次像小秘书反映这个问题，很奇怪别人联系小秘书都能得到答复，为什么笔者就没有这个待遇？<br><img src="/2016/07/29/cloud-music-plugin/1.jpg" alt="开发组" title="开发组"><br><img src="/2016/07/29/cloud-music-plugin/2.jpg" alt="小秘书" title="小秘书"><br>既然反映问题没有答复，那就自己动手丰衣足食吧。</p>
+<h2 id="基本思路"><a href="#基本思路" class="headerlink" title="基本思路"></a>基本思路</h2><p>大致构思了一下，实现分为两部分：1. 用云音乐的API爬取指定的播放列表的详细歌单，保存到本地备用；2. 本地读取歌单，随机挑选歌曲，模拟鼠标键盘事件去操作云音乐的客户端，通过客户端的搜索功能找到该歌曲并播放。由于本地自己保存的歌单是没有1000首歌的限制的，所以间接达到了目的。是的，就是这种很土很直接的方法，破解网易云音乐客户端什么的太难了……</p>
+<h2 id="爬取歌单"><a href="#爬取歌单" class="headerlink" title="爬取歌单"></a>爬取歌单</h2><p>这部分其实Github上开源的关于网易云音乐API分析的文章和代码很多，笔者看到的是<a href="https://github.com/metowolf/NeteaseCloudMusicApi/wiki/%E7%BD%91%E6%98%93%E4%BA%91%E9%9F%B3%E4%B9%90API%E5%88%86%E6%9E%90%EF%BC%88v2%EF%BC%89%E6%96%B0" target="_blank" rel="external">网易云音乐API分析（v2）新</a> 以及 <a href="https://github.com/darknessomi/musicbox/wiki/%E7%BD%91%E6%98%93%E4%BA%91%E9%9F%B3%E4%B9%90%E6%96%B0%E7%89%88WebAPI%E5%88%86%E6%9E%90%E3%80%82" target="_blank" rel="external">网易云音乐新版WebAPI分析</a>这两篇。大致介绍一下，获取歌单POST到这个url就可以了<code>POST http://music.163.com/weapi/v3/playlist/detail?csrf_token=</code>，参数如下<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">req = &#123;</div><div class="line">	&quot;id&quot;: playlist_id,</div><div class="line">        &quot;offset&quot;: 0,</div><div class="line">	&quot;total&quot;: True,</div><div class="line">	&quot;limit&quot;: 1000,</div><div class="line">	&quot;n&quot;: 1000,</div><div class="line">	&quot;csrf_token&quot;: csrf</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里关键是post的参数是需要经过两部加密的，具体的加密方式就详见上面两篇文章吧，这里就不再详细介绍了。<br>抓取到的是json的数据，格式在<a href="https://github.com/metowolf/NeteaseCloudMusicApi/wiki/%E7%BD%91%E6%98%93%E4%BA%91%E9%9F%B3%E4%B9%90API%E5%88%86%E6%9E%90%EF%BC%88v2%EF%BC%89%E6%96%B0" target="_blank" rel="external">网易云音乐API分析（v2）新</a>一文中也有介绍，这里需要提取出的是json[“playlist”][“trackIds”]数组里的数据，每一项的形式如下：<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">&#123;</div><div class="line">	[&quot;id&quot;] =&gt; int(35847388)</div><div class="line">	[&quot;v&quot;] =&gt; int(11)</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>其中id是我们需要的，保存下来就行了。</p>
+<h2 id="本地客户端"><a href="#本地客户端" class="headerlink" title="本地客户端"></a>本地客户端</h2><p>本地客户端需要做的就是向云音乐客户端发送模拟的鼠标和键盘消息就可以。首先来看一下，假设我们有一首歌的id，那么手动切到这首歌是怎么做的，如下图<br><img src="/2016/07/29/cloud-music-plugin/steps.png" alt="步骤" title="步骤"><br>假设歌曲id已经在系统的剪切板里了，首先点击搜索框，双击全选，然后ctrl+v粘贴，回车搜索歌曲，接着点击单曲(我们只需要显示搜索到的歌曲就行了)，然后点击第一首歌，OK，开始播放了。这里要感谢网易云音乐的客户端搜索歌曲ID也是能搜到歌的，而且搜到的结果是唯一的，就是这首歌。</p>
+<p>模拟鼠标和键盘事件用到Windows API的调用，这里用c#来写，需要import这几个函数<br><figure class="highlight csharp"><table><tr><td class="code"><pre><div class="line"><span class="comment">// 发送键盘消息</span></div><div class="line">[DllImport(<span class="string">"user32.dll"</span>)]</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">void</span> <span class="title">keybd_event</span>(<span class="params"><span class="keyword">byte</span> bVk, <span class="keyword">byte</span> bScan, <span class="keyword">uint</span> dwFlags, <span class="keyword">uint</span> dwExtraInfo</span>)</span>;</div><div class="line"><span class="comment">// post 消息</span></div><div class="line">[DllImport(<span class="string">"User32.dll"</span>, EntryPoint = <span class="string">"PostMessage"</span>)]</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">int</span> <span class="title">PostMessage</span>(<span class="params">IntPtr hWnd, <span class="keyword">uint</span> Msg, <span class="keyword">uint</span> wParam, <span class="keyword">uint</span> lParam</span>)</span>; </div><div class="line"><span class="comment">// 查找窗口句柄</span></div><div class="line">[DllImport(<span class="string">"user32.dll"</span>, EntryPoint = <span class="string">"FindWindow"</span>)]</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> IntPtr <span class="title">FindWindow</span>(<span class="params"><span class="keyword">string</span> lpClassName, <span class="keyword">string</span> lpWindowName</span>)</span>; </div><div class="line"><span class="comment">// 查找子窗口句柄</span></div><div class="line">[DllImport(<span class="string">"user32.dll"</span>, EntryPoint = <span class="string">"FindWindowEx"</span>)]</div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> IntPtr <span class="title">FindWindowEx</span>(<span class="params">IntPtr hwndParent, IntPtr hwndChildAfter, <span class="keyword">string</span> lpszClass, <span class="keyword">string</span> lpszWindow</span>)</span>; </div></pre></td></tr></table></figure></p>
+<p>接下来介绍一个vs下很好用的工具spy++，知道可以跳过这一段了。使用 Spy++ 可以执行下列操作： 显示系统对象（包括进程、线程和窗口）之间关系的图形树。 搜索指定的窗口、线程、进程或消息。 查看选定的窗口、线程、进程或消息的属性。spy++在vs的工具菜单下。<br>这里通过spy++来查看云音乐客户端的窗口类(或者查看窗口标题)，用于获取窗口句柄来向它发送消息。<br><img src="/2016/07/29/cloud-music-plugin/spy++.jpg" alt="spy++" title="spy++"><br>首先ctrl+f调出上图的窗口，选择属性，把雷达符号拖到云音乐的窗口上后松开鼠标，点击确定后就可以看到该窗口做的一些属性了，点同步还可以看到窗口之间的树形图。<br><img src="/2016/07/29/cloud-music-plugin/tree.jpg" alt="云音乐窗口树形图" title="云音乐窗口树形图"><br>从图中看到，我们要获取的是类名为“Chrome_WidgetWin_0”的子窗口的句柄，所以我们要依次查找类名为“OrpheusBrowserHost”的父窗口，然后以该父窗口的句柄为参数查找类名为“CefBrowserWindow”的子窗口句柄，再以该子窗口句柄为参数查找类名为“Chrome_WidgetWin_0”的子窗口句柄，即为我们需要的窗口句柄。<br><figure class="highlight csharp"><table><tr><td class="code"><pre><div class="line"><span class="comment">/*</span></div><div class="line"> * SystemCallUtils是封装上述系统调用的类</div><div class="line"> */</div><div class="line">IntPtr handle = SystemCallUtils.FindWindow(<span class="string">"OrpheusBrowserHost"</span>, <span class="literal">null</span>);</div><div class="line"><span class="keyword">if</span> (handle != IntPtr.Zero)</div><div class="line">&#123;</div><div class="line">	handle = SystemCallUtils.FindWindowEx(handle, IntPtr.Zero, <span class="string">"CefBrowserWindow"</span>, <span class="literal">null</span>);</div><div class="line">	handle = SystemCallUtils.FindWindowEx(handle, IntPtr.Zero, <span class="string">"Chrome_WidgetWin_0"</span>, <span class="literal">null</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure><br>有了窗口句柄之后我们就可以向它发送消息了。这里还需要用spy++先捕获一下消息，主要是为了获得鼠标点击不同位置时的参数。具体做法和上面一样，但是spy++的属性单选改为消息。然后在云音乐客户端上操作一遍上文提到的切歌的操作，可以看到spy++把消息都截获下来了，样子如下图<br><img src="/2016/07/29/cloud-music-plugin/messages.jpg" alt="消息" title="消息"><br>这里需要做的就是从这一大堆消息中找到那几个关键的消息，即鼠标双击搜索框，ctrl+v粘贴……，查看这些消息的lParam和wParam，记录下来，并在代码中模拟这些消息的发送。是的，这就是一个体力活，而且对于不同分辨率，或者不同云音乐客户端大小的用户来说，这些参数都是不一样的，不过目前还没有找到更好的方法，欢迎补充。笔者找到这些参数之后，写了一段代码来模拟消息的发送，可以成功切歌。<br><figure class="highlight csharp"><table><tr><td class="code"><pre><div class="line"><span class="comment">/*</span></div><div class="line"> * 常量定义</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="keyword">const</span> <span class="keyword">int</span> WM_CHAR = <span class="number">0x0102</span>;</div><div class="line"><span class="keyword">public</span> <span class="keyword">const</span> <span class="keyword">int</span> WM_MOUSEMOVE = <span class="number">0x0200</span>;</div><div class="line"><span class="keyword">public</span> <span class="keyword">const</span> <span class="keyword">int</span> WM_LBUTTONDOWN = <span class="number">0x0201</span>;</div><div class="line"><span class="keyword">public</span> <span class="keyword">const</span> <span class="keyword">int</span> WM_LBUTTONUP = <span class="number">0x0202</span>;</div><div class="line"><span class="keyword">public</span> <span class="keyword">const</span> <span class="keyword">int</span> WM_LBUTTONDBLCLK = <span class="number">0x203</span>;</div><div class="line"><span class="keyword">public</span> <span class="keyword">const</span> <span class="keyword">int</span> WM_KEYDOWN = <span class="number">0x0100</span>;</div><div class="line"><span class="keyword">public</span> <span class="keyword">const</span> <span class="keyword">int</span> WM_KEYUP = <span class="number">0x0101</span>;</div><div class="line"><span class="keyword">public</span> <span class="keyword">const</span> <span class="keyword">int</span> VK_CONTROL = <span class="number">0x11</span>;</div><div class="line"><span class="keyword">public</span> <span class="keyword">const</span> <span class="keyword">int</span> VK_V = <span class="number">0x56</span>;</div><div class="line"><span class="keyword">public</span> <span class="keyword">const</span> <span class="keyword">int</span> VK_RETURN = <span class="number">0x0D</span>;</div><div class="line"></div><div class="line"><span class="comment">// 鼠标移动到搜索框</span></div><div class="line">SystemCallUtils.PostMessage(test, SystemCallUtils.WM_MOUSEMOVE, <span class="number">0x00</span>, <span class="number">0x001B014E</span>);</div><div class="line">Thread.Sleep(<span class="number">10</span>);</div><div class="line"></div><div class="line"><span class="comment">// 让网易云客户端获得焦点</span></div><div class="line">SystemCallUtils.PostMessage(test, SystemCallUtils.WM_LBUTTONDOWN, <span class="number">0x01</span>, <span class="number">0x001B014E</span>);</div><div class="line">Thread.Sleep(<span class="number">10</span>);</div><div class="line">SystemCallUtils.PostMessage(test, SystemCallUtils.WM_LBUTTONUP, <span class="number">0x00</span>, <span class="number">0x001B014E</span>);</div><div class="line">Thread.Sleep(<span class="number">10</span>);</div><div class="line"></div><div class="line"><span class="comment">// 鼠标双击搜索框</span></div><div class="line">SystemCallUtils.PostMessage(test, SystemCallUtils.WM_LBUTTONDOWN, <span class="number">0x01</span>, <span class="number">0x001B014E</span>);</div><div class="line">Thread.Sleep(<span class="number">10</span>);</div><div class="line">SystemCallUtils.PostMessage(test, SystemCallUtils.WM_LBUTTONDBLCLK, <span class="number">0x01</span>, <span class="number">0x001B014E</span>);</div><div class="line">Thread.Sleep(<span class="number">10</span>);</div><div class="line">SystemCallUtils.PostMessage(test, SystemCallUtils.WM_LBUTTONUP, <span class="number">0x00</span>, <span class="number">0x001B014E</span>);</div><div class="line">Thread.Sleep(<span class="number">10</span>);</div><div class="line"></div><div class="line"><span class="comment">// 发送ctrl+v，粘贴</span></div><div class="line">SystemCallUtils.keybd_event(SystemCallUtils.VK_CONTROL, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>); <span class="comment">// 用keybord event 发送ctrl</span></div><div class="line">Thread.Sleep(<span class="number">10</span>);</div><div class="line">SystemCallUtils.PostMessage(test, SystemCallUtils.WM_KEYDOWN, SystemCallUtils.VK_V, <span class="number">0x002F0001</span>);</div><div class="line">Thread.Sleep(<span class="number">10</span>);</div><div class="line">SystemCallUtils.PostMessage(test, SystemCallUtils.WM_CHAR, <span class="number">0x016</span>, <span class="number">0x002F0001</span>);</div><div class="line">Thread.Sleep(<span class="number">10</span>);</div><div class="line">SystemCallUtils.keybd_event(SystemCallUtils.VK_CONTROL, <span class="number">0</span>, <span class="number">0x02</span>, <span class="number">0</span>);</div><div class="line">Thread.Sleep(<span class="number">10</span>);</div><div class="line">SystemCallUtils.PostMessage(test, SystemCallUtils.WM_KEYUP, SystemCallUtils.VK_V, <span class="number">0xC02F0001</span>);</div><div class="line">Thread.Sleep(<span class="number">10</span>);</div><div class="line"></div><div class="line"><span class="comment">// 回车</span></div><div class="line">SystemCallUtils.PostMessage(test, SystemCallUtils.WM_KEYDOWN, SystemCallUtils.VK_RETURN, <span class="number">0x001C001</span>);</div><div class="line">Thread.Sleep(<span class="number">10</span>);</div><div class="line">SystemCallUtils.PostMessage(test, SystemCallUtils.WM_KEYUP, SystemCallUtils.VK_RETURN, <span class="number">0xC01C001</span>);</div><div class="line"></div><div class="line"><span class="comment">// 点击单曲</span></div><div class="line">SystemCallUtils.PostMessage(test, SystemCallUtils.WM_MOUSEMOVE, <span class="number">0x00</span>, <span class="number">0x00870119</span>);</div><div class="line">Thread.Sleep(<span class="number">10</span>);</div><div class="line">SystemCallUtils.PostMessage(test, SystemCallUtils.WM_LBUTTONDOWN, <span class="number">0x01</span>, <span class="number">0x00870119</span>);</div><div class="line">Thread.Sleep(<span class="number">10</span>);</div><div class="line">SystemCallUtils.PostMessage(test, SystemCallUtils.WM_LBUTTONUP, <span class="number">0x00</span>, <span class="number">0x00870119</span>);</div><div class="line">Thread.Sleep(<span class="number">10</span>);</div><div class="line"></div><div class="line"><span class="comment">// 等待云音乐客户端刷新</span></div><div class="line">Thread.Sleep(<span class="number">1000</span>);</div><div class="line"></div><div class="line"><span class="comment">// 移动到第一个</span></div><div class="line">SystemCallUtils.PostMessage(test, SystemCallUtils.WM_MOUSEMOVE, <span class="number">0x00</span>, <span class="number">0x00C30151</span>);</div><div class="line">Thread.Sleep(<span class="number">10</span>);</div><div class="line"><span class="comment">// 按下鼠标左键</span></div><div class="line">SystemCallUtils.PostMessage(test, SystemCallUtils.WM_LBUTTONDOWN, <span class="number">0x01</span>, <span class="number">0x00C30151</span>);</div><div class="line">Thread.Sleep(<span class="number">10</span>);</div><div class="line"><span class="comment">// 双击</span></div><div class="line">SystemCallUtils.PostMessage(test, SystemCallUtils.WM_LBUTTONDBLCLK, <span class="number">0x01</span>, <span class="number">0x00C30151</span>);</div><div class="line">Thread.Sleep(<span class="number">10</span>);</div><div class="line"><span class="comment">// 松开</span></div><div class="line">SystemCallUtils.PostMessage(test, SystemCallUtils.WM_LBUTTONUP, <span class="number">0x00</span>, <span class="number">0x00C30151</span>);</div><div class="line">Thread.Sleep(<span class="number">10</span>);</div></pre></td></tr></table></figure></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这样，主要的逻辑其实已经完成了，剩下的就是把两部分内容结合起来，一些边边角角的代码了。其实这个方法鲁帮性很差，比如说那个等待网页刷新笔者给了1000ms的等待时间，但是如果上一首歌还没加载完的话，这1000ms时间是不够刷新的，这个时候切歌就失败了。另外，如果要做到连续播放，最好能在上一首歌播放完的时候实现自动切歌，这样就需要在爬取歌单的时候，顺便把时间也爬取下来。类似的问题还有很多很多，此文就当是抛砖引玉，希望能看到更好更路棒的方法。<br>最后的最后，鄙视一下网易云音乐的开发组，这个功能很难实现吗？不能实现给个回复不行吗？<br><a href="https://github.com/yosef-gao/CloudMusicPlugin" target="_blank" rel="external">github代码</a></p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://yosef-gao.github.io/2016/07/29/cloud-music-plugin/" data-id="citjkzjr7002720qfljd4uhur" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c#</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/">python</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2016/07/25/cjson-source-code/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">cJSON源码解析(1)</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2016/08/05/string-similarity-and-lcs/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">字符串相似度以及最长公共子序列</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+
+
+        </div>
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          
+  <div class="sidebar-module sidebar-module-inset">
+  <h4>About</h4>
+  <p>Hi, I am yosef gao.</p>
+<p>Graduate student of Zhejiang University of technology.</p>
+<p>Major in Image and Graphics. Mainly use c/c++, familiar with c#.</p>
+<p>I’m now learing server development.</p>
+<p><i class="fa fa-user fa-fw"></i> <em>yosef gao</em><br><i class="fa fa-graduation-cap fa-fw"></i> <em>ZJUT</em><br><i class="fa fa-wechat fa-fw"></i> <em>perfect_means_shit</em><br><i class="fa fa-envelope fa-fw"></i> <a href="&#x6d;&#x61;&#105;&#108;&#116;&#111;&#58;&#x31;&#x30;&#x33;&#x33;&#x31;&#51;&#49;&#x36;&#54;&#x30;&#x40;&#x71;&#x71;&#x2e;&#99;&#111;&#x6d;">&#x31;&#x30;&#x33;&#x33;&#x31;&#51;&#49;&#x36;&#54;&#x30;&#x40;&#x71;&#x71;&#x2e;&#99;&#111;&#x6d;</a></p>
+
+</div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Algorithm/">Algorithm</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/ComputerScience/">ComputerScience</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Image-and-Grapgics/">Image and Grapgics</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Linux/">Linux</a><span class="sidebar-module-list-count">12</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Others/">Others</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Program/">Program</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Tools/">Tools</a><span class="sidebar-module-list-count">1</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/OS/">OS</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/bfs/">bfs</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/c/">c#</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/c-c/">c/c++</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/dfs/">dfs</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/file-system/">file system</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/image-process/">image process</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/json/">json</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/lamp/">lamp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/linux/">linux</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/markdown/">markdown</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/opencv/">opencv</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/particle-filter/">particle filter</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/shell/">shell</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/unix/">unix</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/zjut/">zjut</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/动态规划/">动态规划</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/面试/">面试</a><span class="sidebar-module-list-count">1</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/OS/" style="font-size: 10px;">OS</a> <a href="/tags/bfs/" style="font-size: 10px;">bfs</a> <a href="/tags/c/" style="font-size: 10px;">c#</a> <a href="/tags/c-c/" style="font-size: 17.5px;">c/c++</a> <a href="/tags/dfs/" style="font-size: 10px;">dfs</a> <a href="/tags/file-system/" style="font-size: 12.5px;">file system</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/image-process/" style="font-size: 10px;">image process</a> <a href="/tags/json/" style="font-size: 12.5px;">json</a> <a href="/tags/lamp/" style="font-size: 10px;">lamp</a> <a href="/tags/linux/" style="font-size: 20px;">linux</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/opencv/" style="font-size: 10px;">opencv</a> <a href="/tags/particle-filter/" style="font-size: 10px;">particle filter</a> <a href="/tags/python/" style="font-size: 12.5px;">python</a> <a href="/tags/shell/" style="font-size: 15px;">shell</a> <a href="/tags/unix/" style="font-size: 10px;">unix</a> <a href="/tags/zjut/" style="font-size: 12.5px;">zjut</a> <a href="/tags/动态规划/" style="font-size: 10px;">动态规划</a> <a href="/tags/面试/" style="font-size: 10px;">面试</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/08/">August 2016</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/07/">July 2016</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/06/">June 2016</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/04/">April 2016</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/03/">March 2016</a><span class="sidebar-module-list-count">7</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2016/08/06/bfs-and-dfs/">深度优先搜索与广度优先搜索</a>
+        </li>
+      
+        <li>
+          <a href="/2016/08/05/string-similarity-and-lcs/">字符串相似度以及最长公共子序列</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/29/cloud-music-plugin/">突破网易云音乐播放列表1000限制</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/25/cjson-source-code/">cJSON源码解析(1)</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/25/json/">JSON简介</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Yosef Gao<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+  
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js" integrity="sha384-8gBf6Y4YYq7Jx97PIqmTwLPin4hxIzQw5aDmUg/DDhul9fFpbbLcLh3nTIIDJKhx" crossorigin="anonymous"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

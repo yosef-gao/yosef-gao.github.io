@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Linux shell program(1) | Fantacity</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="掌握linux shell 编程，可以用简单的脚本来执行大量简单的重复任务，定时任务，是使用linux必备的技能之一，本文简单总结linux shell编程的一些要点和技巧。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux shell program(1)">
+<meta property="og:url" content="http://yosef-gao.github.io/2016/06/11/linux-shell-program/index.html">
+<meta property="og:site_name" content="Fantacity">
+<meta property="og:description" content="掌握linux shell 编程，可以用简单的脚本来执行大量简单的重复任务，定时任务，是使用linux必备的技能之一，本文简单总结linux shell编程的一些要点和技巧。">
+<meta property="og:updated_time" content="2016-09-26T04:22:44.885Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux shell program(1)">
+<meta name="twitter:description" content="掌握linux shell 编程，可以用简单的脚本来执行大量简单的重复任务，定时任务，是使用linux必备的技能之一，本文简单总结linux shell编程的一些要点和技巧。">
+  
+    <link rel="alternate" href="/atom.xml" title="Fantacity" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="https://github.com/yosef-gao">Github</a></li>
+        
+          <li><a class=""
+                 href="/about/aboutme.html">About Me</a></li>
+        
+          <li><a class=""
+                 href="/Links/index.html">Links</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+          <li><a href="/atom.xml" title="RSS Feed"><i class="fa fa-rss"></i></a></li>
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">Fantacity</h1>
+  
+    <p class="lead blog-description">Stand Alone Complex</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-8 blog-main">
+          <article id="post-linux-shell-program" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      Linux shell program(1)
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2016/06/11/linux-shell-program/" class="article-date"><time datetime="2016-06-11T11:32:45.000Z" itemprop="datePublished">2016-06-11</time></a>
+</div>
+
+    <div class="article-author">yosef gao</div>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Linux/">Linux</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>掌握linux shell 编程，可以用简单的脚本来执行大量简单的重复任务，定时任务，是使用linux必备的技能之一，本文简单总结linux shell编程的一些要点和技巧。</p>
+<a id="more"></a>
+<h2 id="退出状态码"><a href="#退出状态码" class="headerlink" title="退出状态码"></a>退出状态码</h2><p>Linux提供了$?专属变量来保存上个执行的命令的退出状态码。你必须在你要查看的命令之后马上查看或使用$?变量。它的值会变成shell中执行的最后一条命令的退出状态码。<br>按照惯例，一个成功结束的命令的退出状态码是0.如果一个命令结束时有错误，退出状态码就会有一个正数值：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">~$ asdfg</div><div class="line">程序“asdfg”尚未安装。 您可以使用以下命令安装：</div><div class="line">sudo apt-get install aoeui</div><div class="line">~$ <span class="built_in">echo</span> $?</div><div class="line">127</div><div class="line">~$ </div></pre></td></tr></table></figure></p>
+<p>Linux错误退出的状态码没有什么标准惯例。但有一些可用的参考，如下表所示：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">状 态 码</th>
+<th style="text-align:left">描  述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">0</td>
+<td style="text-align:left">命令成功结束</td>
+</tr>
+<tr>
+<td style="text-align:left">1</td>
+<td style="text-align:left">通用未知错误</td>
+</tr>
+<tr>
+<td style="text-align:left">2</td>
+<td style="text-align:left">误用shell命令</td>
+</tr>
+<tr>
+<td style="text-align:left">126</td>
+<td style="text-align:left">命令不可执行</td>
+</tr>
+<tr>
+<td style="text-align:left">127</td>
+<td style="text-align:left">没找到命令</td>
+</tr>
+<tr>
+<td style="text-align:left">128</td>
+<td style="text-align:left">无效退出参数</td>
+</tr>
+<tr>
+<td style="text-align:left">128+x</td>
+<td style="text-align:left">Linux信号x的严重错误</td>
+</tr>
+<tr>
+<td style="text-align:left">130</td>
+<td style="text-align:left">命令通过Ctrl+C终止</td>
+</tr>
+<tr>
+<td style="text-align:left">255</td>
+<td style="text-align:left">退出状态码越界</td>
+</tr>
+</tbody>
+</table>
+<p>命令exit允许你指定一个退出状态码，但只能之0~255之间，否则shell会通过模运算得到这个范围之间的结果。</p>
+<h2 id="if-then-及其相关语句"><a href="#if-then-及其相关语句" class="headerlink" title="if-then 及其相关语句"></a>if-then 及其相关语句</h2><p>最基本的if-then语句格式如下：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line"><span class="keyword">if</span> <span class="built_in">command</span></div><div class="line"><span class="keyword">then</span></div><div class="line">	commands</div><div class="line"><span class="keyword">fi</span></div></pre></td></tr></table></figure><br>不过我更喜欢下面这种格式：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line"><span class="keyword">if</span> <span class="built_in">command</span>; <span class="keyword">then</span></div><div class="line">    commands</div><div class="line"><span class="keyword">fi</span></div></pre></td></tr></table></figure></p>
+<p>test命令提供了在if-then语句中测试不同条件的途径，格式为：<br>test condition<br>bash shell 提供了另一种在if-then语句中声明test命令的方法：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line"><span class="keyword">if</span> [ condition ]; <span class="keyword">then</span></div><div class="line">    commands</div><div class="line"><span class="keyword">fi</span></div></pre></td></tr></table></figure><br>这个要注意<strong>左括号右侧与右括号左侧各加一个空格</strong>，否则会报错。</p>
+<p>test命令提供三种3类条件的判断：</p>
+<ul>
+<li>数值比较</li>
+<li>字符串比较</li>
+<li>文件比较</li>
+</ul>
+<p><strong>1. 数值比较</strong><br>下表列出了测试两个值时可用的条件参数。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">比   较</th>
+<th style="text-align:left">描    述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">n1 -eq n2</td>
+<td style="text-align:left">检查n1是否与n2相等</td>
+</tr>
+<tr>
+<td style="text-align:left">n1 -ge n2</td>
+<td style="text-align:left">检查n1是否大于等于n2</td>
+</tr>
+<tr>
+<td style="text-align:left">n1 -gt n2</td>
+<td style="text-align:left">检查n1是否大于n2</td>
+</tr>
+<tr>
+<td style="text-align:left">n1 -le n2</td>
+<td style="text-align:left">检查n1是否小于等于n2</td>
+</tr>
+<tr>
+<td style="text-align:left">n1 -lt n2</td>
+<td style="text-align:left">检查n1是否小于n2</td>
+</tr>
+<tr>
+<td style="text-align:left">n1 -ne n2</td>
+<td style="text-align:left">检查n1是否不等于n2</td>
+</tr>
+</tbody>
+</table>
+<p><strong>2. 字符串比较</strong><br>下表列出了可用来比较两个字符串值的函数。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">比   较</th>
+<th style="text-align:left">描    述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">str1 = str2</td>
+<td style="text-align:left">检查str1是否和str2相同</td>
+</tr>
+<tr>
+<td style="text-align:left">str1 != str2</td>
+<td style="text-align:left">检查str1是否和str2不同</td>
+</tr>
+<tr>
+<td style="text-align:left">str1 &lt; str2</td>
+<td style="text-align:left">检查str1是比str2小</td>
+</tr>
+<tr>
+<td style="text-align:left">str1 &gt; str2</td>
+<td style="text-align:left">检查str1是比str2大</td>
+</tr>
+<tr>
+<td style="text-align:left">-n str1</td>
+<td style="text-align:left">检查str1的长度是否非0</td>
+</tr>
+<tr>
+<td style="text-align:left">-z str1</td>
+<td style="text-align:left">检查str1的长度是否为0</td>
+</tr>
+</tbody>
+</table>
+<p>这里要注意<code>&gt;</code>,<code>&lt;</code>符号必须转义<code>\&gt;</code>,<code>\&lt;</code>。另一点，这里的比较大写字母是小于小写字母的。</p>
+<p><strong>3. 文件比较</strong><br>下表列出了可用的文件比较函数。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">比   较</th>
+<th style="text-align:left">描    述</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">-d file</td>
+<td style="text-align:left">检查file是否存在并是一个目录</td>
+</tr>
+<tr>
+<td style="text-align:left">-e file</td>
+<td style="text-align:left">检查file是否存在</td>
+</tr>
+<tr>
+<td style="text-align:left">-f file</td>
+<td style="text-align:left">检查file是否存在并是一个文件</td>
+</tr>
+<tr>
+<td style="text-align:left">-r file</td>
+<td style="text-align:left">检查file是否存在并可读</td>
+</tr>
+<tr>
+<td style="text-align:left">-s file</td>
+<td style="text-align:left">检查file是否存在并非空</td>
+</tr>
+<tr>
+<td style="text-align:left">-w file</td>
+<td style="text-align:left">检查file是否存在并可写</td>
+</tr>
+<tr>
+<td style="text-align:left">-x file</td>
+<td style="text-align:left">检检查file是否存在并可执行</td>
+</tr>
+<tr>
+<td style="text-align:left">-O file</td>
+<td style="text-align:left">检查file是否存在并属当前用户所有</td>
+</tr>
+<tr>
+<td style="text-align:left">-G file</td>
+<td style="text-align:left">检查file是否存在并且默认组与当前用户相同</td>
+</tr>
+<tr>
+<td style="text-align:left">file1 -nt file2</td>
+<td style="text-align:left">检查file1是否比file2新</td>
+</tr>
+<tr>
+<td style="text-align:left">file1 -ot file2</td>
+<td style="text-align:left">检查file1是否比file2旧</td>
+</tr>
+</tbody>
+</table>
+<p>if-then 可以使用(( expression )) 来将高级数学表达式放入比较中。在元括号中表达式里的大于号不需要转义。<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">val1=10</div><div class="line"><span class="keyword">if</span> (( <span class="variable">$val1</span> **2 &gt; 90 )); <span class="keyword">then</span></div><div class="line">    (( val2 = <span class="variable">$val1</span> ** 2 ))</div><div class="line">    <span class="built_in">echo</span> <span class="string">"The square of <span class="variable">$val1</span> is <span class="variable">$val2</span>"</span></div><div class="line"><span class="keyword">fi</span></div></pre></td></tr></table></figure></p>
+<p>双方括号命令提供了针对字符串比较的高级特征。[[ expression ]]<br>双方括号里的expression使用了test命令中采用的标准字符串进行比较，同时也提供了test没有的匹配模式(pattern matching)特性。<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line"><span class="keyword">if</span> [[ <span class="variable">$USER</span> == r* ]]; <span class="keyword">then</span></div><div class="line">    <span class="built_in">echo</span> <span class="string">"Hello <span class="variable">$USER</span>"</span></div><div class="line"><span class="keyword">else</span></div><div class="line">    <span class="built_in">echo</span> <span class="string">"Sorry. I do not know you."</span></div><div class="line"><span class="keyword">fi</span></div></pre></td></tr></table></figure></p>
+<h2 id="case-命令"><a href="#case-命令" class="headerlink" title="case 命令"></a>case 命令</h2><p>简单语法如下：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line"><span class="keyword">case</span> variable <span class="keyword">in</span></div><div class="line">pattern1 | pattern2) commands1;;</div><div class="line">pattern3 commands2;;</div><div class="line">*) default commands;;</div><div class="line"><span class="keyword">esac</span></div></pre></td></tr></table></figure><br>*号会捕获所有跟所有列出的模式都不匹配的值。</p>
+<p>一个简单的例子如下：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line"><span class="keyword">case</span> <span class="variable">$USER</span> <span class="keyword">in</span></div><div class="line">rich | barbara) </div><div class="line">    <span class="built_in">echo</span> <span class="string">"Welcome, <span class="variable">$USER</span>"</span></div><div class="line">    <span class="built_in">echo</span> <span class="string">"Please enjoy your visit"</span>;;</div><div class="line"><span class="built_in">test</span>)</div><div class="line">    <span class="built_in">echo</span> <span class="string">"Special testing account"</span>;;</div><div class="line">jessica)</div><div class="line">    <span class="built_in">echo</span> <span class="string">"Do not forget to log out when you're done"</span>;;</div><div class="line">*)</div><div class="line">    <span class="built_in">echo</span> <span class="string">"Sorry, you are not allowed here"</span>;;</div><div class="line">esca</div></pre></td></tr></table></figure></p>
+<h2 id="循环语句"><a href="#循环语句" class="headerlink" title="循环语句"></a>循环语句</h2><p><strong>1. for 命令</strong><br>基本语法：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line"><span class="keyword">for</span> var <span class="keyword">in</span> list</div><div class="line"><span class="keyword">do</span></div><div class="line">    commands</div><div class="line"><span class="keyword">done</span></div><div class="line"></div><div class="line"><span class="keyword">for</span> var <span class="keyword">in</span> list; <span class="keyword">do</span></div><div class="line">    commands</div><div class="line"><span class="keyword">done</span></div></pre></td></tr></table></figure></p>
+<p>bash shell 也支持c语言风格的for命令：<br><figure class="highlight plain"><figcaption><span>lang::bash</span></figcaption><table><tr><td class="code"><pre><div class="line">for (( a=1; a &lt; 10; a++ ))</div></pre></td></tr></table></figure><br>其中有一些事情没有遵循标准的bash shell for 命令：</p>
+<ul>
+<li>给变量赋值可以有空格</li>
+<li>条件中的变量不以美元符开头</li>
+<li>迭代过程中的算是未用expr命令格式</li>
+</ul>
+<p>有一个特殊的环境变量叫IFS(internal field sepearator)，称为内部字段分隔符。IFS环境变量定义了bash shell用作字段分隔符的一系列字符。默认情况下，bash shell会将下列字符当作字段分隔符：</p>
+<ul>
+<li>空格</li>
+<li>制表符</li>
+<li>换行符<br>如果bash shell在数据中看到了这些字符中的任意一个，它就会假定你在列表中开始了一个新的数据段。在处理可能含有空格的数据(比如文件名)时，这会非常麻烦。<br>要解决这个问题，你可以在shell脚本中临时更改IFS环境变量的值来限制一下被bash shell当作字段分隔符的字符。一个可以参考的简单实践是在改变IFS之前保存原来IFS的值，之后再恢复它。<br>这种技术可以这样编程：<figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">IFS.OLD=<span class="variable">$IFS</span></div><div class="line">IFS=$<span class="string">'\n'</span></div><div class="line">&lt;use the new IFS value <span class="keyword">in</span> code&gt;</div><div class="line">IFS=<span class="variable">$IFS</span>.OLD</div></pre></td></tr></table></figure>
+如果你要指定多个IFS字符，只要将他们在赋值行串起来就行：<br>IFS=$’\n:;”‘</li>
+</ul>
+<p><strong>2. while 命令</strong><br>while命令的格式是：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line"><span class="keyword">while</span> <span class="built_in">test</span> <span class="built_in">command</span></div><div class="line"><span class="keyword">do</span> </div><div class="line">    other commands</div><div class="line"><span class="keyword">done</span></div><div class="line"></div><div class="line"><span class="keyword">while</span> <span class="built_in">test</span> commands; <span class="keyword">do</span></div><div class="line">    other commnads</div><div class="line"><span class="keyword">done</span></div></pre></td></tr></table></figure></p>
+<p><strong>3. until 命令</strong><br>until命令的格式是：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">until <span class="built_in">test</span> commands</div><div class="line"><span class="keyword">do</span> </div><div class="line">    other commands</div><div class="line"><span class="keyword">done</span> </div><div class="line"></div><div class="line">until <span class="built_in">test</span> commands; <span class="keyword">do</span></div><div class="line">    other commands</div><div class="line"><span class="keyword">done</span></div></pre></td></tr></table></figure><br>until命令要求你指定一个通常输出非零退出状态码的测试命令。</p>
+<p><strong>4. break，continue命令</strong><br>break命令可以退出循环。在处理多个循环时，break命令会自动终止你所在最里面的循环。brea命令接受单个命令行参数值：<br>break n<br>用来指明要跳出的循环的层数。</p>
+<p>最后，在shell脚本中，可以在done命令之后添加一个处理命令：<br>done &gt; output.txt<br>将循环命令的结果和重定向到文件output.txt中。</p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://yosef-gao.github.io/2016/06/11/linux-shell-program/" data-id="citjkzjou001220qfjitypaaa" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/shell/">shell</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2016/06/06/linux-file-system/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">Linux 文件系统</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2016/06/12/linux-shell-program/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">Linux shell program(2)</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+
+
+        </div>
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          
+  <div class="sidebar-module sidebar-module-inset">
+  <h4>About</h4>
+  <p>Hi, I am yosef gao.</p>
+<p>Graduate student of Zhejiang University of technology.</p>
+<p>Major in Image and Graphics. Mainly use c/c++, familiar with c#.</p>
+<p>I’m now learing server development.</p>
+<p><i class="fa fa-user fa-fw"></i> <em>yosef gao</em><br><i class="fa fa-graduation-cap fa-fw"></i> <em>ZJUT</em><br><i class="fa fa-wechat fa-fw"></i> <em>perfect_means_shit</em><br><i class="fa fa-envelope fa-fw"></i> <a href="&#x6d;&#x61;&#105;&#108;&#116;&#111;&#58;&#x31;&#x30;&#x33;&#x33;&#x31;&#51;&#49;&#x36;&#54;&#x30;&#x40;&#x71;&#x71;&#x2e;&#99;&#111;&#x6d;">&#x31;&#x30;&#x33;&#x33;&#x31;&#51;&#49;&#x36;&#54;&#x30;&#x40;&#x71;&#x71;&#x2e;&#99;&#111;&#x6d;</a></p>
+
+</div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Algorithm/">Algorithm</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/ComputerScience/">ComputerScience</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Image-and-Grapgics/">Image and Grapgics</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Linux/">Linux</a><span class="sidebar-module-list-count">12</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Others/">Others</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Program/">Program</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Tools/">Tools</a><span class="sidebar-module-list-count">1</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/OS/">OS</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/bfs/">bfs</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/c/">c#</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/c-c/">c/c++</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/dfs/">dfs</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/file-system/">file system</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/image-process/">image process</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/json/">json</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/lamp/">lamp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/linux/">linux</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/markdown/">markdown</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/opencv/">opencv</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/particle-filter/">particle filter</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/shell/">shell</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/unix/">unix</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/zjut/">zjut</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/动态规划/">动态规划</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/面试/">面试</a><span class="sidebar-module-list-count">1</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/OS/" style="font-size: 10px;">OS</a> <a href="/tags/bfs/" style="font-size: 10px;">bfs</a> <a href="/tags/c/" style="font-size: 10px;">c#</a> <a href="/tags/c-c/" style="font-size: 17.5px;">c/c++</a> <a href="/tags/dfs/" style="font-size: 10px;">dfs</a> <a href="/tags/file-system/" style="font-size: 12.5px;">file system</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/image-process/" style="font-size: 10px;">image process</a> <a href="/tags/json/" style="font-size: 12.5px;">json</a> <a href="/tags/lamp/" style="font-size: 10px;">lamp</a> <a href="/tags/linux/" style="font-size: 20px;">linux</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/opencv/" style="font-size: 10px;">opencv</a> <a href="/tags/particle-filter/" style="font-size: 10px;">particle filter</a> <a href="/tags/python/" style="font-size: 12.5px;">python</a> <a href="/tags/shell/" style="font-size: 15px;">shell</a> <a href="/tags/unix/" style="font-size: 10px;">unix</a> <a href="/tags/zjut/" style="font-size: 12.5px;">zjut</a> <a href="/tags/动态规划/" style="font-size: 10px;">动态规划</a> <a href="/tags/面试/" style="font-size: 10px;">面试</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/08/">August 2016</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/07/">July 2016</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/06/">June 2016</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/04/">April 2016</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/03/">March 2016</a><span class="sidebar-module-list-count">7</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2016/08/06/bfs-and-dfs/">深度优先搜索与广度优先搜索</a>
+        </li>
+      
+        <li>
+          <a href="/2016/08/05/string-similarity-and-lcs/">字符串相似度以及最长公共子序列</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/29/cloud-music-plugin/">突破网易云音乐播放列表1000限制</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/25/cjson-source-code/">cJSON源码解析(1)</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/25/json/">JSON简介</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Yosef Gao<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+  
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js" integrity="sha384-8gBf6Y4YYq7Jx97PIqmTwLPin4hxIzQw5aDmUg/DDhul9fFpbbLcLh3nTIIDJKhx" crossorigin="anonymous"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Linux shell program(3) | Fantacity</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="在shell中有一段代码需要重复使用时，就可以用函数来代替。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux shell program(3)">
+<meta property="og:url" content="http://yosef-gao.github.io/2016/06/13/linux-shell-program/index.html">
+<meta property="og:site_name" content="Fantacity">
+<meta property="og:description" content="在shell中有一段代码需要重复使用时，就可以用函数来代替。">
+<meta property="og:updated_time" content="2016-09-26T04:22:44.903Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux shell program(3)">
+<meta name="twitter:description" content="在shell中有一段代码需要重复使用时，就可以用函数来代替。">
+  
+    <link rel="alternate" href="/atom.xml" title="Fantacity" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="https://github.com/yosef-gao">Github</a></li>
+        
+          <li><a class=""
+                 href="/about/aboutme.html">About Me</a></li>
+        
+          <li><a class=""
+                 href="/Links/index.html">Links</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+          <li><a href="/atom.xml" title="RSS Feed"><i class="fa fa-rss"></i></a></li>
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">Fantacity</h1>
+  
+    <p class="lead blog-description">Stand Alone Complex</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-8 blog-main">
+          <article id="post-linux-shell-program" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      Linux shell program(3)
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2016/06/13/linux-shell-program/" class="article-date"><time datetime="2016-06-13T07:27:34.000Z" itemprop="datePublished">2016-06-13</time></a>
+</div>
+
+    <div class="article-author">yosef gao</div>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Linux/">Linux</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>在shell中有一段代码需要重复使用时，就可以用函数来代替。<br><a id="more"></a></p>
+<h2 id="函数创建与使用"><a href="#函数创建与使用" class="headerlink" title="函数创建与使用"></a>函数创建与使用</h2><p>有两种格式可以用来在bash shell脚本中创建函数。第一种格式采用关键字function，后跟分配给该代码块的函数名：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line"><span class="keyword">function</span> name &#123;</div><div class="line">    commands</div><div class="line">&#125;</div></pre></td></tr></table></figure><br>name属性定义了赋予函数的唯一名称。脚本中定义的每个函数都必须是唯一的名称。<br>bash shell脚本中定义函数的第二种格式跟在其他语言中定义函数很像：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line"><span class="function"><span class="title">name</span></span>() &#123;</div><div class="line">    commands</div><div class="line">&#125;</div></pre></td></tr></table></figure><br>函数名后的圆括号为空，表明正在定义的是一个函数。</p>
+<p>用在脚本中使用函数，在行上指定函数名就行了，跟使用其他shell命令一样：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ cat <span class="built_in">test</span>10.sh </div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line"><span class="keyword">function</span> func1 &#123;</div><div class="line">    <span class="built_in">echo</span> <span class="string">"This is an example of a function"</span></div><div class="line">&#125;</div><div class="line"></div><div class="line">count=1</div><div class="line"><span class="keyword">while</span> [ <span class="variable">$count</span> -le 5 ]; <span class="keyword">do</span></div><div class="line">    func1</div><div class="line">    count=$[ <span class="variable">$count</span> + 1 ]</div><div class="line"><span class="keyword">done</span></div><div class="line"></div><div class="line"><span class="built_in">echo</span> <span class="string">"This is the end of the loop"</span></div><div class="line">func1</div><div class="line"><span class="built_in">echo</span> <span class="string">"Now this is the end of the srcipt"</span></div><div class="line">$</div><div class="line">$ ./<span class="built_in">test</span>10.sh </div><div class="line">This is an example of a <span class="keyword">function</span></div><div class="line">This is an example of a <span class="keyword">function</span></div><div class="line">This is an example of a <span class="keyword">function</span></div><div class="line">This is an example of a <span class="keyword">function</span></div><div class="line">This is an example of a <span class="keyword">function</span></div><div class="line">This is the end of the loop</div><div class="line">This is an example of a <span class="keyword">function</span></div><div class="line">Now this is the end of the srcipt</div></pre></td></tr></table></figure></p>
+<h2 id="函数的返回值"><a href="#函数的返回值" class="headerlink" title="函数的返回值"></a>函数的返回值</h2><p>bash shell会把函数当作小型脚本，运行结束时会返回一个退出状态码。有3中不同的方法来为函数生成退出状态码。</p>
+<p><strong>1. 默认退出状态码</strong><br>默认情况下，函数的退出状态码是函数中最后一条命令返回的退出码。在函数执行结束后，你可以用标准的$?变量来决定函数的退出状态码：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ cat <span class="built_in">test</span>11.sh </div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line"><span class="function"><span class="title">func1</span></span>() &#123;</div><div class="line">    ls <span class="_">-l</span> badfile</div><div class="line">    <span class="built_in">echo</span> <span class="string">"This was a test of a bad command"</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="built_in">echo</span> <span class="string">"testing the function:"</span></div><div class="line">func1</div><div class="line"><span class="built_in">echo</span> <span class="string">"The exit status is: $?"</span></div><div class="line">$</div><div class="line">$ ./<span class="built_in">test</span>11.sh </div><div class="line">testing the <span class="keyword">function</span>:</div><div class="line">ls: 无法访问badfile: 没有那个文件或目录</div><div class="line">This was a <span class="built_in">test</span> of a bad <span class="built_in">command</span></div><div class="line">The <span class="built_in">exit</span> status is: 0</div><div class="line">$</div></pre></td></tr></table></figure><br>从上述代码可以看到，由于函数以成功运行的echo语句结尾，函数的退出状态码就是0,尽管函数中有一条命令没有运行成功。使用函数的默认退出状态码是很危险的。</p>
+<p><strong>2. 使用return命令</strong><br>bash shell使用return命令来退出函数并返回特定的退出状态码。return命令允许指定一个整数值来定义函数的退出状态码：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ cat <span class="built_in">test</span>12.sh </div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line"><span class="keyword">function</span> db1 &#123;</div><div class="line">    <span class="built_in">read</span> -p <span class="string">"Enter a value: "</span> value</div><div class="line">    <span class="built_in">echo</span> <span class="string">"doubling the value"</span></div><div class="line">    <span class="built_in">return</span> $[ <span class="variable">$value</span> * 2 ]</div><div class="line">&#125;</div><div class="line"></div><div class="line">db1</div><div class="line"><span class="built_in">echo</span> <span class="string">"The new value is $?"</span></div><div class="line">$ ./<span class="built_in">test</span>12.sh </div><div class="line">Enter a value: 12</div><div class="line">doubling the value</div><div class="line">The new value is 24</div><div class="line">$ </div></pre></td></tr></table></figure><br>但当使用这种方法从函数中返回值时，要记住下面两点：</p>
+<ul>
+<li>函数一结束就取返回值</li>
+<li>退出状态码必须在0~255之间。</li>
+</ul>
+<p>如果在用$?变量提取函数返回值之前执行了其他命令，函数的返回值就可能会丢失。</p>
+<p><strong>3. 使用函数输出</strong><br>正如同可以将命令的输出保存在shell变量中一样，也可以将函数的输出保存到shell变量中。可以用这种技术来获得任何类型的函数输出，并将其保存到变量中：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ cat <span class="built_in">test</span>13.sh </div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line"><span class="keyword">function</span> db1 &#123;</div><div class="line">    <span class="built_in">read</span> -p <span class="string">"Enter a value: "</span> value</div><div class="line">    <span class="built_in">echo</span> $[ <span class="variable">$value</span> * 2 ]</div><div class="line">&#125;</div><div class="line"></div><div class="line">result=`db1`</div><div class="line"><span class="built_in">echo</span> <span class="string">"The new value is <span class="variable">$result</span>"</span></div><div class="line">$ ./<span class="built_in">test</span>13.sh </div><div class="line">Enter a value: 200</div><div class="line">The new value is 400</div><div class="line">$ </div></pre></td></tr></table></figure><br>本示例演示了一个小技巧。你会注意到db1函数输出了两条消息。read命令输出了一条简短的消息来向用户询问输入值。bash shell脚本会聪明地不将它作为STDOUT输出的一部分，并且忽略掉它。如果你用echo语句生成这条消息来向用户查询，则shell命令会将其与输出值一起读进变量中。<br>通过这种方法，你还可以返回浮点值和字符串值。这让它非常适合返回函数值。</p>
+<h2 id="函数中使用变量"><a href="#函数中使用变量" class="headerlink" title="函数中使用变量"></a>函数中使用变量</h2><p>函数可以使用标准的参数环境变量来代表命令行上传给函数的参数。例如，函数名会在$0变量中定义，函数命令行上的任何参数都会通过$1,$2等定义。也可以用特殊变量$#来判断传给函数的参数数目。<br>在脚本中指定函数时，必须将参数和函数放在同一行：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ cat <span class="built_in">test</span>14.sh </div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line"><span class="keyword">function</span> addem &#123;</div><div class="line">    <span class="keyword">if</span> [ <span class="variable">$#</span> <span class="_">-eq</span> 0 ] || [ <span class="variable">$#</span> <span class="_">-gt</span> 2 ]; <span class="keyword">then</span></div><div class="line">        <span class="built_in">echo</span> -1</div><div class="line">    <span class="keyword">elif</span> [ <span class="variable">$#</span> <span class="_">-eq</span> 1 ]; <span class="keyword">then</span></div><div class="line">        <span class="built_in">echo</span> $[ <span class="variable">$1</span> + <span class="variable">$1</span> ]</div><div class="line">    <span class="keyword">else</span></div><div class="line">        <span class="built_in">echo</span> $[ <span class="variable">$1</span> + <span class="variable">$2</span> ]</div><div class="line">    <span class="keyword">fi</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="built_in">echo</span> -n <span class="string">"Adding 10 and 15: "</span></div><div class="line">value=`addem 10 15`</div><div class="line"><span class="built_in">echo</span> <span class="variable">$value</span></div><div class="line"><span class="built_in">echo</span> -n <span class="string">"Let's try adding just one numbers: "</span></div><div class="line">value=`addem 10`</div><div class="line"><span class="built_in">echo</span> <span class="variable">$value</span></div><div class="line"><span class="built_in">echo</span> -n <span class="string">"Now let's try adding no numbers: "</span></div><div class="line">value=`addem`</div><div class="line"><span class="built_in">echo</span> <span class="variable">$value</span></div><div class="line"><span class="built_in">echo</span> -n <span class="string">"Finally, let't try adding three numbers: "</span></div><div class="line">value=`addem 10 15 20`</div><div class="line"><span class="built_in">echo</span> <span class="variable">$value</span></div><div class="line">$</div><div class="line">$ ./<span class="built_in">test</span>14.sh </div><div class="line">Adding 10 and 15: 25</div><div class="line">Let<span class="string">'s try adding just one numbers: 20</span></div><div class="line">Now let's try adding no numbers: -1</div><div class="line">Finally, <span class="built_in">let</span><span class="string">'t try adding three numbers: -1</span></div><div class="line">$ </div></pre></td></tr></table></figure></p>
+<h2 id="函数中的全局变量与局部变量"><a href="#函数中的全局变量与局部变量" class="headerlink" title="函数中的全局变量与局部变量"></a>函数中的全局变量与局部变量</h2><p><strong>全局变量</strong>是在shell脚本中任何地方都有效的变量。默认情况下，你在脚本中定义的任何变量都是全局变量。在函数外定义的变量可在函数内正常访问。<br>不用在函数中使用全局变量，函数每部使用的任何变量都可以被声明成<strong>局部变量</strong>。要那么做时，只要在变量声明的前面加上local关键字就可以了。<br>下面是全局变量与局部变量的例子：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ cat <span class="built_in">test</span>15.sh </div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line"><span class="keyword">function</span> func1 &#123;</div><div class="line">    <span class="built_in">local</span> temp=$[ <span class="variable">$value</span> + 5 ]</div><div class="line">    temp=$[ <span class="variable">$temp</span> * 2 ]</div><div class="line">    value=$[ <span class="variable">$value</span> + 5 ]</div><div class="line">&#125;</div><div class="line"></div><div class="line">temp=4</div><div class="line">value=6</div><div class="line"></div><div class="line"><span class="built_in">echo</span> <span class="string">"Before func1, temp is <span class="variable">$temp</span>, value is <span class="variable">$value</span>"</span></div><div class="line">func1</div><div class="line"><span class="built_in">echo</span> <span class="string">"After func1, temp is <span class="variable">$temp</span>, value is <span class="variable">$value</span>"</span></div><div class="line">$ </div><div class="line">$ ./<span class="built_in">test</span>15.sh </div><div class="line">Before func1, temp is 4, value is 6</div><div class="line">After func1, temp is 4, value is 11</div><div class="line">$ </div></pre></td></tr></table></figure><br>从上面的例子可以看出，在函数内部声明的局部变量temp会<strong>覆盖</strong>全局变量temp，至于在声明了局部变量temp之后如何再引用全局变量变量temp，我目前还不知道。</p>
+<h2 id="函数与数组"><a href="#函数与数组" class="headerlink" title="函数与数组"></a>函数与数组</h2><p>向函数传递数组变量以及从函数返回数组稍微有点麻烦。首先是传递数组变量，你必须将该数组变量的值分解成单个值，然后将这些值作为函数参数使用，在函数内部，你可以将所有的参数重组到新的数组变量中;从函数里向shell脚本传回数组变量也用类似的方式。函数用echo语句来正确顺序输出单个数组值，然后脚本再将它们重新放进一个新的数组中变量中：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ cat <span class="built_in">test</span>16.sh </div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line"><span class="keyword">function</span> testit &#123;</div><div class="line">    <span class="built_in">local</span> newarray</div><div class="line">    newarray=(`<span class="built_in">echo</span> <span class="string">"<span class="variable">$@</span>"</span>`)</div><div class="line">    <span class="keyword">for</span> (( i = 0; i &lt; <span class="variable">$#</span>; i++ ))</div><div class="line">    &#123;</div><div class="line">        newarray[<span class="variable">$i</span>]=$[ <span class="variable">$&#123;newarray[$i]&#125;</span> + 1 ]</div><div class="line">    &#125;</div><div class="line">    <span class="built_in">echo</span> <span class="variable">$&#123;newarray[*]&#125;</span></div><div class="line">&#125;</div><div class="line"></div><div class="line">myarray=(1 2 3 4 5)</div><div class="line"><span class="built_in">echo</span> <span class="string">"The original array is <span class="variable">$&#123;myarray[*]&#125;</span>"</span></div><div class="line">arg1=`<span class="built_in">echo</span> <span class="variable">$&#123;myarray[*]&#125;</span>`</div><div class="line">result=(`testit <span class="variable">$arg1</span>`)</div><div class="line"><span class="built_in">echo</span> <span class="string">"The new array is: <span class="variable">$&#123;result[*]&#125;</span>"</span></div><div class="line">$ ./<span class="built_in">test</span>16.sh </div><div class="line">The original array is 1 2 3 4 5</div><div class="line">The new array is: 2 3 4 5 6</div><div class="line">$ </div></pre></td></tr></table></figure></p>
+<h2 id="函数递归"><a href="#函数递归" class="headerlink" title="函数递归"></a>函数递归</h2><p>bash shell的函数递归与其他语言类似，下面举一个阶乘递归的例子：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ cat <span class="built_in">test</span>17.sh </div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line"><span class="keyword">function</span> factorial &#123;</div><div class="line">    <span class="keyword">if</span> [ <span class="variable">$1</span> <span class="_">-eq</span> 1 ]; <span class="keyword">then</span></div><div class="line">        <span class="built_in">echo</span> 1</div><div class="line">    <span class="keyword">else</span></div><div class="line">        <span class="built_in">local</span> temp=$[ <span class="variable">$1</span> - 1 ]</div><div class="line">        <span class="built_in">local</span> result=`factorial <span class="variable">$temp</span>`</div><div class="line">        <span class="built_in">echo</span> $[ <span class="variable">$result</span> * <span class="variable">$1</span> ]</div><div class="line">    <span class="keyword">fi</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="built_in">read</span> -p <span class="string">"Enter value: "</span> value</div><div class="line">result=`factorial <span class="variable">$value</span>`</div><div class="line"><span class="built_in">echo</span> <span class="string">"The factorial of <span class="variable">$value</span> is: <span class="variable">$result</span>"</span></div><div class="line">$ </div><div class="line">$ ./<span class="built_in">test</span>17.sh </div><div class="line">Enter value: 4</div><div class="line">The factorial of 4 is: 24</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://yosef-gao.github.io/2016/06/13/linux-shell-program/" data-id="citjkzjp2001820qfojn35sxc" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/shell/">shell</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2016/06/12/linux-shell-program/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">Linux shell program(2)</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2016/06/14/cpp-raii/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">C++中RAII技巧(转载)</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+
+
+        </div>
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          
+  <div class="sidebar-module sidebar-module-inset">
+  <h4>About</h4>
+  <p>Hi, I am yosef gao.</p>
+<p>Graduate student of Zhejiang University of technology.</p>
+<p>Major in Image and Graphics. Mainly use c/c++, familiar with c#.</p>
+<p>I’m now learing server development.</p>
+<p><i class="fa fa-user fa-fw"></i> <em>yosef gao</em><br><i class="fa fa-graduation-cap fa-fw"></i> <em>ZJUT</em><br><i class="fa fa-wechat fa-fw"></i> <em>perfect_means_shit</em><br><i class="fa fa-envelope fa-fw"></i> <a href="&#x6d;&#x61;&#105;&#108;&#116;&#111;&#58;&#x31;&#x30;&#x33;&#x33;&#x31;&#51;&#49;&#x36;&#54;&#x30;&#x40;&#x71;&#x71;&#x2e;&#99;&#111;&#x6d;">&#x31;&#x30;&#x33;&#x33;&#x31;&#51;&#49;&#x36;&#54;&#x30;&#x40;&#x71;&#x71;&#x2e;&#99;&#111;&#x6d;</a></p>
+
+</div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Algorithm/">Algorithm</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/ComputerScience/">ComputerScience</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Image-and-Grapgics/">Image and Grapgics</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Linux/">Linux</a><span class="sidebar-module-list-count">12</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Others/">Others</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Program/">Program</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Tools/">Tools</a><span class="sidebar-module-list-count">1</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/OS/">OS</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/bfs/">bfs</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/c/">c#</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/c-c/">c/c++</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/dfs/">dfs</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/file-system/">file system</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/image-process/">image process</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/json/">json</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/lamp/">lamp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/linux/">linux</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/markdown/">markdown</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/opencv/">opencv</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/particle-filter/">particle filter</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/shell/">shell</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/unix/">unix</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/zjut/">zjut</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/动态规划/">动态规划</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/面试/">面试</a><span class="sidebar-module-list-count">1</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/OS/" style="font-size: 10px;">OS</a> <a href="/tags/bfs/" style="font-size: 10px;">bfs</a> <a href="/tags/c/" style="font-size: 10px;">c#</a> <a href="/tags/c-c/" style="font-size: 17.5px;">c/c++</a> <a href="/tags/dfs/" style="font-size: 10px;">dfs</a> <a href="/tags/file-system/" style="font-size: 12.5px;">file system</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/image-process/" style="font-size: 10px;">image process</a> <a href="/tags/json/" style="font-size: 12.5px;">json</a> <a href="/tags/lamp/" style="font-size: 10px;">lamp</a> <a href="/tags/linux/" style="font-size: 20px;">linux</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/opencv/" style="font-size: 10px;">opencv</a> <a href="/tags/particle-filter/" style="font-size: 10px;">particle filter</a> <a href="/tags/python/" style="font-size: 12.5px;">python</a> <a href="/tags/shell/" style="font-size: 15px;">shell</a> <a href="/tags/unix/" style="font-size: 10px;">unix</a> <a href="/tags/zjut/" style="font-size: 12.5px;">zjut</a> <a href="/tags/动态规划/" style="font-size: 10px;">动态规划</a> <a href="/tags/面试/" style="font-size: 10px;">面试</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/08/">August 2016</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/07/">July 2016</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/06/">June 2016</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/04/">April 2016</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/03/">March 2016</a><span class="sidebar-module-list-count">7</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2016/08/06/bfs-and-dfs/">深度优先搜索与广度优先搜索</a>
+        </li>
+      
+        <li>
+          <a href="/2016/08/05/string-similarity-and-lcs/">字符串相似度以及最长公共子序列</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/29/cloud-music-plugin/">突破网易云音乐播放列表1000限制</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/25/cjson-source-code/">cJSON源码解析(1)</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/25/json/">JSON简介</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Yosef Gao<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+  
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js" integrity="sha384-8gBf6Y4YYq7Jx97PIqmTwLPin4hxIzQw5aDmUg/DDhul9fFpbbLcLh3nTIIDJKhx" crossorigin="anonymous"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Linux资源查看 | Fantacity</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="本文根据鸟哥书，总结了一些linux下常用的资源查看命令及其用法。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux资源查看">
+<meta property="og:url" content="http://yosef-gao.github.io/2016/07/10/linux-resource-cmd/index.html">
+<meta property="og:site_name" content="Fantacity">
+<meta property="og:description" content="本文根据鸟哥书，总结了一些linux下常用的资源查看命令及其用法。">
+<meta property="og:updated_time" content="2016-09-26T04:22:44.997Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux资源查看">
+<meta name="twitter:description" content="本文根据鸟哥书，总结了一些linux下常用的资源查看命令及其用法。">
+  
+    <link rel="alternate" href="/atom.xml" title="Fantacity" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="https://github.com/yosef-gao">Github</a></li>
+        
+          <li><a class=""
+                 href="/about/aboutme.html">About Me</a></li>
+        
+          <li><a class=""
+                 href="/Links/index.html">Links</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+          <li><a href="/atom.xml" title="RSS Feed"><i class="fa fa-rss"></i></a></li>
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">Fantacity</h1>
+  
+    <p class="lead blog-description">Stand Alone Complex</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-8 blog-main">
+          <article id="post-linux-resource-cmd" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      Linux资源查看
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2016/07/10/linux-resource-cmd/" class="article-date"><time datetime="2016-07-10T07:25:32.000Z" itemprop="datePublished">2016-07-10</time></a>
+</div>
+
+    <div class="article-author">yosef gao</div>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Linux/">Linux</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本文根据鸟哥书，总结了一些linux下常用的资源查看命令及其用法。<br><a id="more"></a></p>
+<h2 id="进程查看"><a href="#进程查看" class="headerlink" title="进程查看"></a>进程查看</h2><p>进程查看主要是3个命令，ps静态查看，top动态查看，pstree查阅程序书之间的关系。</p>
+<p><strong>ps</strong>:将某个时间点的进程运行情况选取下来<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">ps aux	<span class="comment"># 查看系统所有的进程数据</span></div><div class="line">ps <span class="_">-l</span>A	<span class="comment"># 也是能够查看所有系统的数据</span></div><div class="line">ps axjf	<span class="comment"># 连同部分进程树状态</span></div><div class="line">参数：</div><div class="line">-A：所有的进程均显示出来，与<span class="_">-e</span>具有相同的作用；</div><div class="line"><span class="_">-a</span>：不与terminal有关的所有进程；</div><div class="line">-u：有效用户相关的进程；</div><div class="line">x：通常与a这个参数一起使用，可列出较完整的信息；</div><div class="line">输出格式规划：</div><div class="line">l：较长，较详细地将该PID的信息列出；</div><div class="line">j：工作的格式；</div><div class="line"><span class="_">-f</span>：做一个更为完整的输出。</div></pre></td></tr></table></figure></p>
+<p>根据鸟哥的建议，ps记两个不同的参数就可以了，一个是只能查阅自己bash程序的<code>ps -l</code>，一个则是可以查看所有系统运行的程序<code>ps aux</code>。<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ ps <span class="_">-l</span></div><div class="line">F S   UID   PID  PPID  C PRI  NI ADDR SZ WCHAN  TTY          TIME CMD</div><div class="line">0 S  1000  4530  2891  0  80   0 -  2656 <span class="built_in">wait</span>   pts/6    00:00:00 bash</div><div class="line">0 R  1000  4742  4530  0  80   0 -  1603 -      pts/6    00:00:00 ps</div></pre></td></tr></table></figure></p>
+<ul>
+<li>F代表进程标志(process flags)，说明这个进程的权限</li>
+<li>S代表这个进程的状态(STAT)，主要状态有：<ul>
+<li>R(Running)：该进程正在运行中；</li>
+<li>S(Sleep)：该进程正在睡眠状态(idle)，但可以被唤醒(signal)；</li>
+<li>D：不可被唤醒的睡眠状态，通常这个进程可能在等待I/O的情况；</li>
+<li>T：停止状态(stop)，可能实在工作控制(后台暂停)或除错(traced)状态；</li>
+<li>Z：(Zombie)：“僵尸”状态，进程已经终止，但却无法被删除至内存外。</li>
+</ul>
+</li>
+<li>UID/PID/PPID：顾名思义，此进程的UID，PID和PPID号码。</li>
+<li>C：代表CPU使用率，单位为百分比。</li>
+<li>PRI/NI：Priority/Nice的缩写，代表此进程被CPU所执行的优先级，数值越小代表该进程越快被CPU执行。</li>
+<li>ADDR/SZ/WCHAN：与内存有关，ADDR是kernal function，指出该进程在内存的哪个部分，如果是个running的进程，一般就会显示“-”。SZ代表此进程用掉多少内存，WCHAN表示目前进程是否运行中，同样若-表示正在运行中。</li>
+<li>TTY：登陆者的终端机位置，若为远程登陆则使用动态终端接口(pts/n)。</li>
+<li>TIME：是用掉的CPU时间，是此进程实际花费CPU运行的时间，而不是系统时间。</li>
+<li>CMD：command，造成此程序的触发进程的命令。</li>
+</ul>
+<p>相对于ps是选取一个时间点的进程状态，<strong>top</strong>则可以持续检测进程运行的状态。<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">top [<span class="_">-d</span> 数字] | top [-bnp]</div><div class="line">参数：</div><div class="line"><span class="_">-d</span>：后面接秒数，表示整个进程界面更新的秒数。默认是5秒。</div><div class="line">-b：以批次的方式执行top，还有更多的参数可以使用。(?)</div><div class="line">-n：与-b搭配，意义是，需要进行几次top的输出结果。(?)</div><div class="line">-p：指定某些PID来进行查看检测。</div><div class="line">在top执行过程中可以使用按键命令：</div><div class="line">?：显示在top当中可以输入的按键命令；</div><div class="line">P：以CPU的使用资源排序显示；</div><div class="line">M：以内存的使用资源排序显示；</div><div class="line">N：以PID来排序；</div><div class="line">T：由该进程使用的CPU时间累积(TIME+)排序；</div><div class="line">k：给予某个PID一个信号(signal)；</div><div class="line">r：给予某个PID重新定制一个nice值；</div><div class="line">q：离开top软件的按键。</div></pre></td></tr></table></figure></p>
+<p><strong>pstree</strong><br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">pstree [-A|U] [-up]</div><div class="line">参数：</div><div class="line">-A：各进程树之间的连接以ASCII字符来连接；</div><div class="line">-U：各进程树之间的连接以utf8码的字符来连接，**在某些终端接口下可能会有错误**；</div><div class="line">-p：同时列出每个进程的PID；</div><div class="line">-u：同时列出每个进程的所属帐号名称。</div></pre></td></tr></table></figure></p>
+<p><strong>free</strong>：查看内存使用情况<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">pstree [-b|-k|-m|-g] [-t]</div><div class="line">参数：</div><div class="line">-b：直接输入free时，显示的单位是KB，可以使用b(bytes),m(MB),k(KB),以及g(GB)来显示单位；</div><div class="line">-t：在输出的最终结果中显示无力内存与swap的总量。</div><div class="line">例如：</div><div class="line">$ free -mk</div><div class="line">             total       used       free     shared    buffers     cached</div><div class="line">Mem:       2063808    1484128     579680       6188     138728     646624</div><div class="line">-/+ buffers/cache:     698776    1365032</div><div class="line">Swap:       976892          0     976892</div></pre></td></tr></table></figure></p>
+<p><strong>uname</strong>：查看系统与内核相关信息<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">uname [-asrmpi]</div><div class="line">参数：</div><div class="line"><span class="_">-a</span>：所有系统相关的信息，包括下面的数据都会被列出来；</div><div class="line"><span class="_">-s</span>：系统内核名称；</div><div class="line">-r：内核版本；</div><div class="line">-m：本系统的硬件名称，例如i686或x86_64等；</div><div class="line">-p：CPU类型，与-m类似，只是显示的是CPU的类型；</div><div class="line">-i：硬件的平台(ix86)</div><div class="line">例如</div><div class="line">$ uname <span class="_">-a</span></div><div class="line">Linux vuser-virtual-machine 3.13.0-32-generic <span class="comment">#57-Ubuntu SMP Tue Jul 15 03:51:12 UTC 2014 i686 i686 i686 GNU/Linux</span></div></pre></td></tr></table></figure></p>
+<p><strong>uptime</strong>：查看系统启动时间与工作负载<br>这个命令显示目前已经开机多久时间，以及1,5,15分钟的平均负载(注意top也有这个)，<em>即uptime可以显示top界面的最上面一行</em>。<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ uptime</div><div class="line"> 14:54:47 up  4:06,  3 users,  load average: 0.20, 0.26, 0.23</div></pre></td></tr></table></figure></p>
+<p><strong>netstat</strong>：网络状态<br>这个命令通常用在网络监控方面。netstat的输出分为两大部分，分别是网络与系统自己的进程相关性部分。<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ netstat -[atunlp]</div><div class="line">参数：</div><div class="line"><span class="_">-a</span>：将目前系统上所有的连接、监听、Socket数据都列出来；</div><div class="line">-t：列出tcp网络数据包的数据；</div><div class="line">-u：列出udp网络数据包的数据；</div><div class="line">-n：不列出进程的服务名称，以端口号(port number)来显示；</div><div class="line"><span class="_">-l</span>：列出目前正在网络监听(listen)的服务；</div><div class="line">-p：列出该网络服务的进程PID。</div></pre></td></tr></table></figure></p>
+<p><strong>dmesg</strong>：分析内核产生的信息<br>系统在开机的时候，内核会去检测系统的硬件。但是这些检测过程要不是没有显示在屏幕上，要么就是很快在屏幕上一闪而过。所有内核检测的信息，都会被记录到内存中的某个保护区段。dmesg这个命令能够将该区段的信息读出来。由于信息较多，可以配合“| more”来显示。</p>
+<p><strong>vmstat</strong>：检测系统资源变化<br>vmstat可以检测CPU/内存/磁盘输入输出状态等，下面是常见的参数说明：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">vmstat [<span class="_">-a</span>] [延迟[总计检测次数]] <span class="comment"># CPU/内存等信息</span></div><div class="line">vmstat [-fs]			<span class="comment"># 内存相关</span></div><div class="line">vmstat [<span class="_">-s</span> 单位]		<span class="comment"># 设置显示数据的单位</span></div><div class="line">vmstat [<span class="_">-d</span>]			<span class="comment"># 与磁盘有关</span></div><div class="line">vmstat [-p 分区]		<span class="comment"># 与磁盘有关</span></div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://yosef-gao.github.io/2016/07/10/linux-resource-cmd/" data-id="citjkzjpt001o20qfmwy7u3bd" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2016/07/08/su-and-sudo/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">su与sudo</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2016/07/15/nfs/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">NFS服务器搭建与演示</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+
+
+        </div>
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          
+  <div class="sidebar-module sidebar-module-inset">
+  <h4>About</h4>
+  <p>Hi, I am yosef gao.</p>
+<p>Graduate student of Zhejiang University of technology.</p>
+<p>Major in Image and Graphics. Mainly use c/c++, familiar with c#.</p>
+<p>I’m now learing server development.</p>
+<p><i class="fa fa-user fa-fw"></i> <em>yosef gao</em><br><i class="fa fa-graduation-cap fa-fw"></i> <em>ZJUT</em><br><i class="fa fa-wechat fa-fw"></i> <em>perfect_means_shit</em><br><i class="fa fa-envelope fa-fw"></i> <a href="&#x6d;&#x61;&#105;&#108;&#116;&#111;&#58;&#x31;&#x30;&#x33;&#x33;&#x31;&#51;&#49;&#x36;&#54;&#x30;&#x40;&#x71;&#x71;&#x2e;&#99;&#111;&#x6d;">&#x31;&#x30;&#x33;&#x33;&#x31;&#51;&#49;&#x36;&#54;&#x30;&#x40;&#x71;&#x71;&#x2e;&#99;&#111;&#x6d;</a></p>
+
+</div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Algorithm/">Algorithm</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/ComputerScience/">ComputerScience</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Image-and-Grapgics/">Image and Grapgics</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Linux/">Linux</a><span class="sidebar-module-list-count">12</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Others/">Others</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Program/">Program</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Tools/">Tools</a><span class="sidebar-module-list-count">1</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/OS/">OS</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/bfs/">bfs</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/c/">c#</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/c-c/">c/c++</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/dfs/">dfs</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/file-system/">file system</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/image-process/">image process</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/json/">json</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/lamp/">lamp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/linux/">linux</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/markdown/">markdown</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/opencv/">opencv</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/particle-filter/">particle filter</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/shell/">shell</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/unix/">unix</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/zjut/">zjut</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/动态规划/">动态规划</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/面试/">面试</a><span class="sidebar-module-list-count">1</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/OS/" style="font-size: 10px;">OS</a> <a href="/tags/bfs/" style="font-size: 10px;">bfs</a> <a href="/tags/c/" style="font-size: 10px;">c#</a> <a href="/tags/c-c/" style="font-size: 17.5px;">c/c++</a> <a href="/tags/dfs/" style="font-size: 10px;">dfs</a> <a href="/tags/file-system/" style="font-size: 12.5px;">file system</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/image-process/" style="font-size: 10px;">image process</a> <a href="/tags/json/" style="font-size: 12.5px;">json</a> <a href="/tags/lamp/" style="font-size: 10px;">lamp</a> <a href="/tags/linux/" style="font-size: 20px;">linux</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/opencv/" style="font-size: 10px;">opencv</a> <a href="/tags/particle-filter/" style="font-size: 10px;">particle filter</a> <a href="/tags/python/" style="font-size: 12.5px;">python</a> <a href="/tags/shell/" style="font-size: 15px;">shell</a> <a href="/tags/unix/" style="font-size: 10px;">unix</a> <a href="/tags/zjut/" style="font-size: 12.5px;">zjut</a> <a href="/tags/动态规划/" style="font-size: 10px;">动态规划</a> <a href="/tags/面试/" style="font-size: 10px;">面试</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/08/">August 2016</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/07/">July 2016</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/06/">June 2016</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/04/">April 2016</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/03/">March 2016</a><span class="sidebar-module-list-count">7</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2016/08/06/bfs-and-dfs/">深度优先搜索与广度优先搜索</a>
+        </li>
+      
+        <li>
+          <a href="/2016/08/05/string-similarity-and-lcs/">字符串相似度以及最长公共子序列</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/29/cloud-music-plugin/">突破网易云音乐播放列表1000限制</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/25/cjson-source-code/">cJSON源码解析(1)</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/25/json/">JSON简介</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Yosef Gao<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+  
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js" integrity="sha384-8gBf6Y4YYq7Jx97PIqmTwLPin4hxIzQw5aDmUg/DDhul9fFpbbLcLh3nTIIDJKhx" crossorigin="anonymous"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

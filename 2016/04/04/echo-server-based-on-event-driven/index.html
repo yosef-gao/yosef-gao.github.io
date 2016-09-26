@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>一个基于事件驱动(event-driven)的回显服务器实现 | Fantacity</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="近年来，Node.js非常活跃，为什么会有这么多人用Node.js呢，相比传统的webserver服务模式，node.js的优势在哪里呢？Node.js是单进程单线程，基于事件驱动（event-driven）的服务器框架，它的性能非常高。本文并不打算讨论Node.js，这里是为了引出事件驱动这一概念。
+事件驱动（event-driven）什么是事件驱动？先来看一个在生活中很常见的例子，去肯德基点餐">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一个基于事件驱动(event-driven)的回显服务器实现">
+<meta property="og:url" content="http://yosef-gao.github.io/2016/04/04/echo-server-based-on-event-driven/index.html">
+<meta property="og:site_name" content="Fantacity">
+<meta property="og:description" content="近年来，Node.js非常活跃，为什么会有这么多人用Node.js呢，相比传统的webserver服务模式，node.js的优势在哪里呢？Node.js是单进程单线程，基于事件驱动（event-driven）的服务器框架，它的性能非常高。本文并不打算讨论Node.js，这里是为了引出事件驱动这一概念。
+事件驱动（event-driven）什么是事件驱动？先来看一个在生活中很常见的例子，去肯德基点餐">
+<meta property="og:updated_time" content="2016-09-26T04:22:44.873Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一个基于事件驱动(event-driven)的回显服务器实现">
+<meta name="twitter:description" content="近年来，Node.js非常活跃，为什么会有这么多人用Node.js呢，相比传统的webserver服务模式，node.js的优势在哪里呢？Node.js是单进程单线程，基于事件驱动（event-driven）的服务器框架，它的性能非常高。本文并不打算讨论Node.js，这里是为了引出事件驱动这一概念。
+事件驱动（event-driven）什么是事件驱动？先来看一个在生活中很常见的例子，去肯德基点餐">
+  
+    <link rel="alternate" href="/atom.xml" title="Fantacity" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="https://github.com/yosef-gao">Github</a></li>
+        
+          <li><a class=""
+                 href="/about/aboutme.html">About Me</a></li>
+        
+          <li><a class=""
+                 href="/Links/index.html">Links</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+          <li><a href="/atom.xml" title="RSS Feed"><i class="fa fa-rss"></i></a></li>
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">Fantacity</h1>
+  
+    <p class="lead blog-description">Stand Alone Complex</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-8 blog-main">
+          <article id="post-echo-server-based-on-event-driven" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      一个基于事件驱动(event-driven)的回显服务器实现
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2016/04/04/echo-server-based-on-event-driven/" class="article-date"><time datetime="2016-04-04T14:21:35.000Z" itemprop="datePublished">2016-04-04</time></a>
+</div>
+
+    <div class="article-author">yosef gao</div>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Linux/">Linux</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>近年来，Node.js非常活跃，为什么会有这么多人用Node.js呢，相比传统的webserver服务模式，node.js的优势在哪里呢？<br>Node.js是单进程单线程，基于事件驱动（event-driven）的服务器框架，它的性能非常高。本文并不打算讨论Node.js，这里是为了引出事件驱动这一概念。</p>
+<h2 id="事件驱动（event-driven）"><a href="#事件驱动（event-driven）" class="headerlink" title="事件驱动（event-driven）"></a>事件驱动（event-driven）</h2><p>什么是事件驱动？先来看一个在生活中很常见的例子，去肯德基点餐。<br><a id="more"></a><br>在传统的webserver服务模式中，我们到了柜台前点餐，你告诉服务员你需要汉堡，薯条，可乐，然后等在那里直到服务员把食物准备好给你，在这之前服务员不能接待下一个顾客。如果想要加快接待客人的速度，那么就增加更多的服务员。<br>当然，我们知道实际上肯德基并不是这样工作的。他们其实就是给予事件驱动方式，这样的效率更高。只要你把要点的食物告诉服务员，付完款之后，你就站在一边，而服务员已经开始接待下一个客户了。在一些餐馆中，他们甚至会给你一个号码，如果你的食物准备好了，就呼叫你的号码去前台取。这里关键的一点就是，你没有阻塞下一个客户的订餐请求。你订的食物做好的事件会导致某个人的某个动作（服务员喊你的订单号码去取食物）。</p>
+<p>第一个方式对应到程序中就是使用线程池+阻塞请求的方式实现的，对于每一个连接请求，服务器从先线程池中取出一个线程来处理请求，这个线程在读取完客户端发送过来的数据之前只能一直阻塞着，而不能做别的事情。<br>而第二种方式对应到程序中就是基于事件驱动+非阻塞的方式实现的，服务器为每一个socket注册一个事件回调函数，并在一个循环内不断观察每一个socket的状态，当这个socket状态改变，就调用相应的回调函数去处理。这里关键的一点是每个socket描述符都是non-blocking的，如果描述服可读（可写）就读取（写入）数据，否则马上返回，所以服务器可以使I/0效率最大化。</p>
+<p>另外，在linux下，可以用epoll来轻松实现事件驱动。</p>
+<h2 id="epoll"><a href="#epoll" class="headerlink" title="epoll"></a>epoll</h2><p>epoll是在linux2.6 的时候引进的一个函数，epoll是linux-only函数，在别的UNIX-like也有类似的函数kqueue。<br>epoll提供了和poll(2)和poll(2)类似的功能，都可以同时观察多个文件描述符，并返回其中可以执行I/O的文件描述符：</p>
+<ul>
+<li>select (2)每次最多只能监听FD_SETSIZE数量文件描述符，这个值通常用libc的运行时决定。据我了解select底层是基于数组实现的，所以有这一限制。</li>
+<li>poll(2)没有文件描述符数量的限制，据我了解其底层是用链表实现的，但是和select(2)一样，它们的时间复杂度都是O(n)，这是非常慢的。</li>
+</ul>
+<p>epoll没有上述限制，据我了解其底层是通过回调函数的机制实现的，所以时间复杂度是O(1)。具体关于epoll的使用方式以及它和poll 与 select区别下次在另一篇博客详细分析一下，这里不再赘述。</p>
+<h2 id="一个基于事件驱动的回显服务器实现"><a href="#一个基于事件驱动的回显服务器实现" class="headerlink" title="一个基于事件驱动的回显服务器实现"></a>一个基于事件驱动的回显服务器实现</h2><p>这里我简单实现了一个基于事件驱动的回显服务器，主要参考的是<a href="https://github.com/zyearn/zaver" target="_blank" rel="external">zaver</a>的代码实现的。</p>
+<p>首先我们为服务端设置SIGPIPE信号的动作：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><div class="line"><span class="comment">/* Install signal handle for SIGPIPE</span></div><div class="line"> * when a fd is clised by remote, writing to rhis fd will cause system send</div><div class="line"> * SIGPIPE to this process, which default action is exit the program*/</div><div class="line"><span class="keyword">struct</span> sigaction sa;</div><div class="line"><span class="built_in">memset</span>((<span class="keyword">void</span> *)&amp;sa, <span class="number">0</span>, <span class="keyword">sizeof</span>(sa));</div><div class="line">sa.sa_handler = SIG_IGN;</div><div class="line">sa.sa_flags = <span class="number">0</span>;</div><div class="line"><span class="keyword">if</span> (sigaction(SIGPIPE, &amp;sa, <span class="literal">NULL</span>) &lt; <span class="number">0</span>)</div><div class="line">&#123;</div><div class="line">    log_err(<span class="string">"install signal handler for SIGPIPE failed"</span>);</div><div class="line">    <span class="built_in">exit</span>(EXIT_FAILURE);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>关于SIGPIPE信号，我们可以参看UNP书第三版的5.13节：当一进程向某个已收到RST的套接字执行写操作时，内核向该进程发送一个SIGPIPE信号。该信号的默认行为是终止进程，因此进程<strong>必须捕获它</strong>以免不情愿地被终止。不论该进程是捕获了该信号并从其信号处理函数返回，还是简单地忽略该信号，写操作都将返回EPIPE错误。<br>我们的程序中设置SIGPIPE信号的动作为忽略该信号，而该信号的默认动作是终止进程。由于我们并不知道客户端会在什么情况下突然断开连接，如果我们向这个已经断开连接中写入数据，那么第一次会收到客户端发送的RST，但是在应用层并不知道这个RST，于是第二次写数据的时候就被莫名其妙终止进程了。<br>在用webbench测试web服务器性能的时候就遇到过这个问题，server总是莫名其妙挂掉，其实就是因为这个原因。</p>
+<p>接着创建了一个服务器监听套接字，并把它设为非阻塞模式：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><div class="line"><span class="keyword">int</span> listen_fd;</div><div class="line"><span class="keyword">struct</span> sockaddr_in clientaddr;</div><div class="line"><span class="keyword">socklen_t</span> clientlen = <span class="number">1</span>;</div><div class="line"><span class="built_in">memset</span>((<span class="keyword">void</span> *)&amp;clientaddr, <span class="number">0</span>, <span class="keyword">sizeof</span>(clientaddr));</div><div class="line"></div><div class="line">listen_fd = open_listenfd(<span class="number">8080</span>); <span class="comment">/* listen on port 8080 */</span></div><div class="line">rc = make_socket_non_blocking(listen_fd); <span class="comment">/* set file descriptor non-blocking */</span></div><div class="line"></div></pre></td></tr></table></figure></p>
+<p>创建epoll文件描述符，并监听服务器套接字listen_fd：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><div class="line"><span class="comment">/* Ceate epoll and listen to epoll*/</span></div><div class="line"><span class="keyword">int</span> epoll_fd = ts_epoll_create(<span class="number">0</span>);</div><div class="line"><span class="keyword">struct</span> epoll_event event;</div><div class="line"></div><div class="line"><span class="keyword">ts_message_t</span> *msg = (<span class="keyword">ts_message_t</span> *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">ts_message_t</span>));</div><div class="line"><span class="keyword">ts_init_message_t</span>(msg, listen_fd, epoll_fd);</div><div class="line"></div><div class="line">event.data.ptr = (<span class="keyword">void</span> *)msg;</div><div class="line">event.events = EPOLLIN | EPOLLET;</div><div class="line">ts_epoll_add(epoll_fd, listen_fd, &amp;event);</div></pre></td></tr></table></figure></p>
+<p>接下来就是关键事件循环，也就是epoll wait loop:<br><figure class="highlight cpp"><table><tr><td class="code"><pre><div class="line"><span class="comment">/* epoll_wait loop*/</span></div><div class="line"><span class="keyword">int</span> i, n, fd;</div><div class="line"><span class="keyword">while</span> (<span class="number">1</span>)</div><div class="line">&#123;</div><div class="line">    n = ts_epoll_wait(epoll_fd, events, MAXEVENTS, <span class="number">0</span>);</div><div class="line">    <span class="keyword">for</span> (i = <span class="number">0</span>; i &lt; n; ++i)</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">ts_message_t</span> *msg = (<span class="keyword">ts_message_t</span> *)events[i].data.ptr;</div><div class="line">        fd = msg-&gt;fd;</div><div class="line"></div><div class="line">        <span class="keyword">if</span> (listen_fd == fd)</div><div class="line">        &#123;</div><div class="line">            <span class="comment">/* We have one or more incoming connections */</span></div><div class="line">            <span class="keyword">int</span> infd;</div><div class="line">            <span class="keyword">while</span> (<span class="number">1</span>)</div><div class="line">            &#123;</div><div class="line">                infd = accept(listen_fd, (<span class="keyword">struct</span> sockaddr *)&amp;clientaddr, &amp;clientlen);</div><div class="line">                <span class="keyword">if</span> (infd &lt; <span class="number">0</span>) <span class="comment">/* error */</span></div><div class="line">                &#123;</div><div class="line">                    <span class="keyword">if</span> ((errno == EAGAIN) || (errno == EWOULDBLOCK))</div><div class="line">                    &#123;</div><div class="line">                        <span class="comment">/* We have processed all incoming connections </span></div><div class="line">                         * more details: https://banu.com/blog/2/how-to-use-epoll-a-complete-example-in-c */</div><div class="line">                        <span class="keyword">break</span>;</div><div class="line">                    &#125;</div><div class="line">                    <span class="keyword">else</span></div><div class="line">                    &#123;</div><div class="line">                        log_err(<span class="string">"accpet"</span>);</div><div class="line">                        <span class="keyword">break</span>;</div><div class="line">                    &#125;</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                rc = make_socket_non_blocking(infd);</div><div class="line">                check(rc == <span class="number">0</span>, <span class="string">"make_socket_non_blocking"</span>);</div><div class="line">                log_info(<span class="string">"new connection fd %d"</span>, infd);</div><div class="line"></div><div class="line">                <span class="keyword">ts_message_t</span> *msg = (<span class="keyword">ts_message_t</span> *)<span class="built_in">malloc</span>(<span class="keyword">sizeof</span>(<span class="keyword">ts_message_t</span>));</div><div class="line">                <span class="keyword">if</span> (msg == <span class="literal">NULL</span>)</div><div class="line">                &#123;</div><div class="line">                    log_err(<span class="string">"malloc ts_message_t"</span>);</div><div class="line">                    <span class="keyword">break</span>;</div><div class="line">                &#125;</div><div class="line"></div><div class="line">                <span class="keyword">ts_init_message_t</span>(msg, infd, epoll_fd);</div><div class="line">                event.data.ptr = (<span class="keyword">void</span> *)msg;</div><div class="line">                event.events = EPOLLIN | EPOLLET | EPOLLONESHOT;</div><div class="line"></div><div class="line">                ts_epoll_add(epoll_fd, infd, &amp;event);</div><div class="line">            &#125; <span class="comment">// end of while accpet</span></div><div class="line">        &#125;</div><div class="line">        <span class="keyword">else</span></div><div class="line">        &#123;</div><div class="line">            <span class="comment">/* We have one or more clients' messages to read */</span></div><div class="line"></div><div class="line">            <span class="comment">/* </span></div><div class="line">             * EPOLLHUP:</div><div class="line">             * Stream socket peer closed connection, or shut down writing half</div><div class="line">             * of connection. (This flag is especially useful for writing simple</div><div class="line">             * code to detect peer shutdown when using Edge Triggered monitoring</div><div class="line">             * */</div><div class="line"></div><div class="line">            <span class="keyword">if</span> ((events[i].events &amp; EPOLLERR) ||</div><div class="line">                (events[i].events &amp; EPOLLHUP) ||</div><div class="line">                (!(events[i].events &amp; EPOLLIN)))</div><div class="line">            &#123;</div><div class="line">                log_err(<span class="string">"epoll error fd: %d"</span>, fd);</div><div class="line">                close(fd);</div><div class="line">                <span class="keyword">continue</span>;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            <span class="comment">//log_info("new data from fd %d:", fd);</span></div><div class="line"></div><div class="line">            ts_handle_message(msg);</div><div class="line">        &#125;</div><div class="line">    &#125; <span class="comment">// end of for</span></div><div class="line">&#125; <span class="comment">// end of while (1)</span></div></pre></td></tr></table></figure></p>
+<p>这里要注意的是在处理listen_fd文件描述符的时候，需要多次accept直到到<code>errno == EAGAIN</code>或者<code>errno == EWOULDBLOCK</code>，这样才能把当前所有的connect请求都accept。</p>
+<p>epoll的事件提醒有有两种模式，一种叫level triggered(水平触发)，另一种叫edge triggerd(边缘触发)。</p>
+<ul>
+<li>LT模式：当epoll_wait检测到描述符事件发生并将此事件通知应用程序，应用程序可以不立即处理（完）该事件。下次调用epoll_wait时，会再次响应应用程序通知此事件。</li>
+<li>EG模式：当epoll_wait检测到描述符事件发生并将此事件通知应用程序，应用程序必须立即处理该时间。如果不处理，下次调用epoll_wait时，不会再次响应应用程序并通知此事件。</li>
+</ul>
+<p>举个具体的例子：如果fd上有2kb的数据，应用程序只读取了1kb，ET就不会在下一次epoll_wait的时候返回，读完以后又有心数据才返回。而ET只要有数据没有读完就会一直返回这个fd。所以在这里我们使用ET模式，循环read知道EAGAIN。</p>
+<p>在客户的文件描述符可读的时候，我们调用<code>ts_handle_message()</code>来处理数据，该函数的主要作用就是循环读入客户的数据到缓冲区，直到<code>errno == EAGAIN</code>。有一种情况是可能一次不能把客户的所有数据都读完（在这里客户每次发送一行数据，但是服务器并不一定能一次完整接收到一行数据），这种时候就需要缓冲区把数据先暂时存储起来，直到读取到一个<code>\r\n</code>之后，再回显在标准输出上，并写回给客户文件描述符。</p>
+<p>一个完整的实现请看<a href="https://github.com/yosef-gao/echo_server" target="_blank" rel="external">这里</a>;</p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://yosef-gao.github.io/2016/04/04/echo-server-based-on-event-driven/" data-id="citjkzjon000z20qfxswlk1r1" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c-c/">c/c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2016/04/02/linux-c-threadpool/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">简单Linux C线程池的实现</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2016/04/16/a-brief-introduction-of-particle-filter/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">浅谈粒子滤波</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+
+
+        </div>
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          
+  <div class="sidebar-module sidebar-module-inset">
+  <h4>About</h4>
+  <p>Hi, I am yosef gao.</p>
+<p>Graduate student of Zhejiang University of technology.</p>
+<p>Major in Image and Graphics. Mainly use c/c++, familiar with c#.</p>
+<p>I’m now learing server development.</p>
+<p><i class="fa fa-user fa-fw"></i> <em>yosef gao</em><br><i class="fa fa-graduation-cap fa-fw"></i> <em>ZJUT</em><br><i class="fa fa-wechat fa-fw"></i> <em>perfect_means_shit</em><br><i class="fa fa-envelope fa-fw"></i> <a href="&#x6d;&#x61;&#105;&#108;&#116;&#111;&#58;&#x31;&#x30;&#x33;&#x33;&#x31;&#51;&#49;&#x36;&#54;&#x30;&#x40;&#x71;&#x71;&#x2e;&#99;&#111;&#x6d;">&#x31;&#x30;&#x33;&#x33;&#x31;&#51;&#49;&#x36;&#54;&#x30;&#x40;&#x71;&#x71;&#x2e;&#99;&#111;&#x6d;</a></p>
+
+</div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Algorithm/">Algorithm</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/ComputerScience/">ComputerScience</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Image-and-Grapgics/">Image and Grapgics</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Linux/">Linux</a><span class="sidebar-module-list-count">12</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Others/">Others</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Program/">Program</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Tools/">Tools</a><span class="sidebar-module-list-count">1</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/OS/">OS</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/bfs/">bfs</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/c/">c#</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/c-c/">c/c++</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/dfs/">dfs</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/file-system/">file system</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/image-process/">image process</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/json/">json</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/lamp/">lamp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/linux/">linux</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/markdown/">markdown</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/opencv/">opencv</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/particle-filter/">particle filter</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/shell/">shell</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/unix/">unix</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/zjut/">zjut</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/动态规划/">动态规划</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/面试/">面试</a><span class="sidebar-module-list-count">1</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/OS/" style="font-size: 10px;">OS</a> <a href="/tags/bfs/" style="font-size: 10px;">bfs</a> <a href="/tags/c/" style="font-size: 10px;">c#</a> <a href="/tags/c-c/" style="font-size: 17.5px;">c/c++</a> <a href="/tags/dfs/" style="font-size: 10px;">dfs</a> <a href="/tags/file-system/" style="font-size: 12.5px;">file system</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/image-process/" style="font-size: 10px;">image process</a> <a href="/tags/json/" style="font-size: 12.5px;">json</a> <a href="/tags/lamp/" style="font-size: 10px;">lamp</a> <a href="/tags/linux/" style="font-size: 20px;">linux</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/opencv/" style="font-size: 10px;">opencv</a> <a href="/tags/particle-filter/" style="font-size: 10px;">particle filter</a> <a href="/tags/python/" style="font-size: 12.5px;">python</a> <a href="/tags/shell/" style="font-size: 15px;">shell</a> <a href="/tags/unix/" style="font-size: 10px;">unix</a> <a href="/tags/zjut/" style="font-size: 12.5px;">zjut</a> <a href="/tags/动态规划/" style="font-size: 10px;">动态规划</a> <a href="/tags/面试/" style="font-size: 10px;">面试</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/08/">August 2016</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/07/">July 2016</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/06/">June 2016</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/04/">April 2016</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/03/">March 2016</a><span class="sidebar-module-list-count">7</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2016/08/06/bfs-and-dfs/">深度优先搜索与广度优先搜索</a>
+        </li>
+      
+        <li>
+          <a href="/2016/08/05/string-similarity-and-lcs/">字符串相似度以及最长公共子序列</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/29/cloud-music-plugin/">突破网易云音乐播放列表1000限制</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/25/cjson-source-code/">cJSON源码解析(1)</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/25/json/">JSON简介</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Yosef Gao<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+  
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js" integrity="sha384-8gBf6Y4YYq7Jx97PIqmTwLPin4hxIzQw5aDmUg/DDhul9fFpbbLcLh3nTIIDJKhx" crossorigin="anonymous"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

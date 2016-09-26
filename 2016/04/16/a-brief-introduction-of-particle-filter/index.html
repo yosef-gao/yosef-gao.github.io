@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>浅谈粒子滤波 | Fantacity</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="什么是例子滤波“估计”就是从带有随机误差的观测数据中估计出某些参数或某些状态变量。估计问题一般分为三类：从当前和过去的观测值来估计信号的当前值，称为滤波；从过去的观测值来估计信号的将来值，称为预测或外推；从过去的观测值来估计过去的信号值，称为平滑或内插。滤波理论就是在对系统可观测信号进行测量的基础上，根据一定的滤波准则，对系统的状态或参数进行估计的理论和方法。粒子滤波（Particle Filte">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈粒子滤波">
+<meta property="og:url" content="http://yosef-gao.github.io/2016/04/16/a-brief-introduction-of-particle-filter/index.html">
+<meta property="og:site_name" content="Fantacity">
+<meta property="og:description" content="什么是例子滤波“估计”就是从带有随机误差的观测数据中估计出某些参数或某些状态变量。估计问题一般分为三类：从当前和过去的观测值来估计信号的当前值，称为滤波；从过去的观测值来估计信号的将来值，称为预测或外推；从过去的观测值来估计过去的信号值，称为平滑或内插。滤波理论就是在对系统可观测信号进行测量的基础上，根据一定的滤波准则，对系统的状态或参数进行估计的理论和方法。粒子滤波（Particle Filte">
+<meta property="og:image" content="http://yosef-gao.github.io/2016/04/16/a-brief-introduction-of-particle-filter/step1.png">
+<meta property="og:image" content="http://yosef-gao.github.io/2016/04/16/a-brief-introduction-of-particle-filter/step3.png">
+<meta property="og:image" content="http://yosef-gao.github.io/2016/04/16/a-brief-introduction-of-particle-filter/pf1.png">
+<meta property="og:image" content="http://yosef-gao.github.io/2016/04/16/a-brief-introduction-of-particle-filter/pf2.png">
+<meta property="og:updated_time" content="2016-09-26T04:22:44.804Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="浅谈粒子滤波">
+<meta name="twitter:description" content="什么是例子滤波“估计”就是从带有随机误差的观测数据中估计出某些参数或某些状态变量。估计问题一般分为三类：从当前和过去的观测值来估计信号的当前值，称为滤波；从过去的观测值来估计信号的将来值，称为预测或外推；从过去的观测值来估计过去的信号值，称为平滑或内插。滤波理论就是在对系统可观测信号进行测量的基础上，根据一定的滤波准则，对系统的状态或参数进行估计的理论和方法。粒子滤波（Particle Filte">
+<meta name="twitter:image" content="http://yosef-gao.github.io/2016/04/16/a-brief-introduction-of-particle-filter/step1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Fantacity" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="https://github.com/yosef-gao">Github</a></li>
+        
+          <li><a class=""
+                 href="/about/aboutme.html">About Me</a></li>
+        
+          <li><a class=""
+                 href="/Links/index.html">Links</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+          <li><a href="/atom.xml" title="RSS Feed"><i class="fa fa-rss"></i></a></li>
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">Fantacity</h1>
+  
+    <p class="lead blog-description">Stand Alone Complex</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-8 blog-main">
+          <article id="post-a-brief-introduction-of-particle-filter" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      浅谈粒子滤波
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2016/04/16/a-brief-introduction-of-particle-filter/" class="article-date"><time datetime="2016-04-16T09:37:34.000Z" itemprop="datePublished">2016-04-16</time></a>
+</div>
+
+    <div class="article-author">yosef gao</div>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Image-and-Grapgics/">Image and Grapgics</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="什么是例子滤波"><a href="#什么是例子滤波" class="headerlink" title="什么是例子滤波"></a>什么是例子滤波</h2><p>“估计”就是从带有随机误差的观测数据中估计出某些参数或某些状态变量。估计问题一般分为三类：从当前和过去的观测值来估计信号的当前值，称为滤波；从过去的观测值来估计信号的将来值，称为预测或外推；从过去的观测值来估计过去的信号值，称为平滑或内插。滤波理论就是在对系统可观测信号进行测量的基础上，根据一定的滤波准则，对系统的状态或参数进行估计的理论和方法。<br>粒子滤波（Particle Filtering）是英国学者Gordon，Salmond等于1993年提出的基于Bayesian原理的非参数化序贯蒙特卡洛(Sequential Monte Carlo methods)模拟递推滤波算法，其核心是利用一些随机样本（粒子）来表示系统随机变量的后验概率分布，适合于强非线性、非高斯噪声系统模型的滤波。Kalman滤波是Bayesian估计在线性条件下的实现形式，而粒子滤波是Bayesian估计在非线性条件下的实现形式。</p>
+<a id="more"></a>
+<h2 id="粒子滤波作为跟踪的基本框架"><a href="#粒子滤波作为跟踪的基本框架" class="headerlink" title="粒子滤波作为跟踪的基本框架"></a>粒子滤波作为跟踪的基本框架</h2><p>粒子滤波作为跟踪的基本框架，主要可以分为4个主要步骤，即初始化阶段，搜索阶段，决策阶段，重采样阶段。<br><strong>1. 初始化阶段</strong><br>程序手动或自动选择一块跟踪区域，计算该区域的特征向量。比如，这个特征可以是颜色，那么可以用颜色直方图来可以表示为一个特征向量。同时我们也初始化N个粒子(Particle)，并为它们初始状态赋值，比如位置可以就是这块被跟踪区域的中心，大小就是被跟踪区域的大小等。最后还要给这些粒子赋权重，由于我们认为初始化的时候，这些粒子的重要性是一样的，所以每个粒子的权重都为1/N。<br><strong>2. 搜索阶段</strong><br>看网上有些博客中把这一阶段解释为放狗，我认为很接地气。这一阶段我们放出一些狗去搜寻我们需要跟踪的目标，这里的狗就是粒子。撒例子的方法有很多种，比如<br>(1)均匀的放(uniform distribution)：在整个搜寻区域内均匀地撒例子；<br>(2)按高斯分布撒粒子(gaussian distribution)：在靠近目标的区域内多放一些粒子。这些粒子撒出去之后，在以它们各自为中心，目标大小的矩形区域内计算图像的颜色直方图，并与原目标颜色直方图之间比较，计算出两个直方图之间的距离。显然，两个直方图之间的距离越小，那么他们的相似度就越高。这里计算直方图之间的距离方法也很多，比如最常用的巴氏距离(Bhattacharyya distance)。然后对这些相似度做一个归一化操作，使他们的和为1。同时，我们还需要根据每个粒子与目标之间的相似度来重新计算每个粒子的权重。<br><img src="/2016/04/16/a-brief-introduction-of-particle-filter/step1.png" alt="初始化与搜索阶段" title="初始化与搜索阶段"><br><strong>3. 决策阶段</strong><br>这个阶段，我们撒出去的粒子要向我们报告他们的状态了。比如1号粒子报告，它所在区域和目标的相似度为0.1，2号粒子报告它所在区域和目标的相似度为0.2，3号粒子报告它所在的区域和目标的相似度为0.3……这里的相似度为上一步中计算得到的。那么我们可以综合这些粒子报告的信息来猜测出目:标的实际位置，即对这些粒子报告的信息做一下加权平均</p>
+<p><script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script><br>$$x=\sum_{i=1}^n x_i*w_i$$<br>$$y=\sum_{i=1}^n y_i*w_i$$<br><img src="/2016/04/16/a-brief-introduction-of-particle-filter/step3.png" alt="决策阶段" title="决策阶段"><br><strong>4. 重采样阶段</strong><br>由于目标的运动是不确定的，我们如果漫无目的地让这些粒子去搜寻，显然效果不会太好，所以我们要重新分布这些粒子。那么怎么分布这些粒子呢？由于那些权重较高的粒子很有可能比较接近目标，所以我们在权重较高的粒子附近多撒一些粒子，而在权重较低的地方收回一些粒子，使粒子的总数保持不变。<br>这就是Improtance Sampling。<br>现在我们只要循环(2)-&gt;(3)-&gt;(4)…就得到了一个目标的跟踪过程。</p>
+<hr>
+<h2 id="《An-Adaptive-Color-Based-Particle-Filter》"><a href="#《An-Adaptive-Color-Based-Particle-Filter》" class="headerlink" title="《An Adaptive Color-Based Particle Filter》"></a>《An Adaptive Color-Based Particle Filter》</h2><p>上面这篇是我在学习粒子滤波算法的时候看到的一篇写得非常好的论文。值得一提的是这篇论文是在2002年发表的，所以我目前的研究和国外还是相差好远啊。好了，回到正题，下面将结合这篇论文来深入理解一下粒子滤波。</p>
+<p><strong>1. Particle Filter</strong><br>粒子滤波最初是被用来在复杂的环境中来跟踪物体的。被跟踪物体的状态可以用向量\(X_t\)来表示，物体到t时刻的观测状态可以用向量\(Z_t=\lbrace z_1,\ldots,z_t\rbrace\)来表示。粒子滤波常用于后验概率\(p(X_t|Z_t)\)和观测概率\(p(Z_t|X_t)\)是非高斯的情况。</p>
+<p>粒子滤波的核心思想是用粒子的权重分布来近似概率分布，其中粒子的权重分布可以用集合\(S=\lbrace (S^\left (n \right ),\pi^\left (n\right ))|n=1\ldots N\rbrace\)来表示。每一个粒子S表示一个对目标状态的猜测，并且猜测的置信度为\(\pi\)，其中\(\sum_{n=1}^N \pi^\left (n\right ) = 1\)。</p>
+<p><strong>2. Color Distribution Model</strong><br>由于颜色分布模型有着鲁棒性，能够应对非刚性，旋转以及部分遮挡等问题而常被用于对目标建模。我们把颜色分布均匀地映射到m个bin中。颜色直方图通过函数\(h(x_i)\)得到，函数\(h(x_i)\)的作用是把位于\(x_i\)位置的像素点的颜色映射到对应的bin中。在作者的实验中，颜色直方图有\(8*8*8\)个bin。如果希望算法不收到光照变化的影响的话，也可是使用HSV模型来替代RGB模型，比如把V分量的bin数量减少为4。(\(8*8*4\)个bin)。</p>
+<p>同时为了提升颜色分布模型的可靠度，使物体边缘的背景像素或者被遮挡时的像素减少对模型的影响，作者还设计了一个核函数<br>$$k(r)=\left \lbrace {1-r^2:r&lt;1} \atop {0:\text{otherwise}} \right . $$<br>其中\(r\)是像素点距离中心的距离。</p>
+<p>颜色分布\(p_y = {\lbrace p_y^\left (u\right ) \rbrace}_{u=1\ldots m} \)在\(y\)点的值可以通过下式计算出：<br>$$p_y^\left (u \right ) = f\sum_{i=1}^I k\left ( \frac{|y-x_i|}{a}\right ) {\delta [h(x_i)-\mu]}$$<br>其中\(I\)是该区域内像素点的个数，\(\delta\)是Kronecker delta函数，参数\(a=\sqrt{H_x^2 + H_y^2}\)是该区域的半径。归一化因子<br>$$f=\frac{1}{\sum_{i=1}^I k\left ( \frac{|y-x_i|}{a} \right )}$$<br>用来确保\(\sum_{u=1}^m p_y^{\left ( u \right )} = 1\)。</p>
+<p>在每一次的跟踪迭代中，我们都需要一个方法来测量观察结果的相似度。一个很经典的测量向量\(p(u)\)和\(q(u)\)之间距离的方法是Bhattacharyya coefficient<br>$$\rho[p,q]=\int \sqrt{p(u)q(u)}du$$<br>对于离散的密度，比如两个颜色直方图\(p={\lbrace p^{(u)} \rbrace}_{u=1 \ldots m}\)和\(q={\lbrace q^{(u)} \rbrace}_{u=1 \ldots m}\)的coefficient可以定义为<br>$$\rho[p,q]=\sum_{u=1}^m \sqrt{p^{(u)}q^{(u)}}$$<br>\(\rho\)的值越大，则两个直方图之间的相似度越接近。对于两个相同的分布，令\(\rho=1\)来代表完美匹配。对于两个分布，作者定义了Bhattacharyya distance<br>$$d=\sqrt{1-\rho[p,q]}$$</p>
+<p><strong>3. Color-Based Particle Filtering</strong><br>在跟踪的过程中，使用Bhattacharyya distance来更新先验概率。每一个样本的分布用下式来表示：<br>$$s=\lbrace x,y,\dot{x},\dot{y},H_x,H_y,\dot{a}\rbrace$$<br>其中\(x,y\)是区域的中心位置，\(\dot{x},\dot{y}\)是速度，\(H_x,H_y\)是区域的半宽和半高，\(\dot{a}\)是尺度变换率。粒子通过下面这个动态模型来传播：<br>$$s_t=As_{t-1}+w_{t-1}$$<br>其中\(A\)是模型的状态空间，\(w_t-1\)是一个多元高斯随机变量。在作者的系统中，使用一个一阶模型来描述一个区域的运动，物体的运动速度为常量\(\dot{x},\dot{y}\)，物体的尺度变化率为\(\dot{a}\)。</p>
+<p>作者使用粒子所在位置的颜色直方图和目标的颜色直方图之间的Bhattacharry coefficient来计算粒子的权重。计算公式如下：<br>$$\pi^{(n)}=\frac1{\sqrt{2\pi}\sigma}e^{-\frac{d^2}{2\sigma ^2}} = \frac1{\sqrt{2\pi}\sigma} e^{-\frac{\left (1-\rho[p_{s^{(n)}},q]\right )}{2\sigma^2}}$$</p>
+<p><strong>4. Target Model Update</strong><br>由于光照条件，可视角度以及相机参数等都会影响color-based particle filter的跟踪效果。为了克服这些问题，作者在跟踪的过程中缓慢更新目标模型。为了防止在物体被遮挡或者噪声太大的时候更新目标模型，作者设置了一个更新条件阈值<br>$$\pi_{E[S]}&gt;\pi_T$$<br>其中\(\pi_{E[S]}\)是平均状态\(E[S]\)的观测概率，\(\pi_T\)是一个阈值.<br>目标模型通过下式得到更新：<br>$$q_t^{(u)}=(1-\alpha )q_{t-1}^{(u)}+\alpha p_{E[S_t]}^{(u)}$$</p>
+<p>完整的算法流程请查看论文，论文中有整个算法过程的描述。</p>
+<h2 id="实现效果"><a href="#实现效果" class="headerlink" title="实现效果"></a>实现效果</h2><p>我根据上文中的这篇论文以及[1]中作者的代码，用EmguCV实现了一个基于颜色分布的粒子滤波。总的来说跟踪的精确性还行，能应对部分遮挡，跟踪物体状态突然发生变化等情况。当选中的跟踪区域较小时，可以达到实时跟踪，但是当选择区域较大时，计算量急剧增加，效率降低，达不到实时的要求，代码还有改进的空间。下图是效果：<br><img src="/2016/04/16/a-brief-introduction-of-particle-filter/pf1.png" alt="粒子滤波" title="粒子滤波"><br><img src="/2016/04/16/a-brief-introduction-of-particle-filter/pf2.png" alt="粒子滤波" title="粒子滤波"></p>
+<h2 id="改进方向"><a href="#改进方向" class="headerlink" title="改进方向"></a>改进方向</h2><p>粒子滤波目前主要的研究方向为：<br>1.改进粒子滤波的重采样算法，提高效率；<br>2.粒子数量的自适应取值算法。</p>
+<h2 id="应用领域"><a href="#应用领域" class="headerlink" title="应用领域"></a>应用领域</h2><p>目前粒子滤波的主要应用领域有：</p>
+<ol>
+<li>视觉跟踪领域</li>
+<li>目标定位、导航、跟踪领域</li>
+<li>通信与信号处理领域</li>
+<li>其他领域</li>
+</ol>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li><a href="http://blog.csdn.net/jinshengtao/article/details/30970733" target="_blank" rel="external">http://blog.csdn.net/jinshengtao/article/details/30970733</a></li>
+<li><a href="http://www.cnblogs.com/yangyangcv/archive/2010/05/23/1742263.html" target="_blank" rel="external">http://www.cnblogs.com/yangyangcv/archive/2010/05/23/1742263.html</a></li>
+<li>Nummiaro K, Koller-Meier E, Van Gool L. An adaptive color-based particle filter[J]. Image and vision computing, 2003, 21(1): 99-110.</li>
+<li>王法胜, 鲁明羽, 赵清杰, 等. 粒子滤波算法[J]. 计算机学报, 2014, 37(8): 1679-1693. </li>
+</ol>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://yosef-gao.github.io/2016/04/16/a-brief-introduction-of-particle-filter/" data-id="citjkzjo9000p20qfj0t95tc4" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/image-process/">image process</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/particle-filter/">particle filter</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2016/04/04/echo-server-based-on-event-driven/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">一个基于事件驱动(event-driven)的回显服务器实现</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2016/04/17/guang-c424-photos/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">春夏之交</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+
+
+        </div>
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          
+  <div class="sidebar-module sidebar-module-inset">
+  <h4>About</h4>
+  <p>Hi, I am yosef gao.</p>
+<p>Graduate student of Zhejiang University of technology.</p>
+<p>Major in Image and Graphics. Mainly use c/c++, familiar with c#.</p>
+<p>I’m now learing server development.</p>
+<p><i class="fa fa-user fa-fw"></i> <em>yosef gao</em><br><i class="fa fa-graduation-cap fa-fw"></i> <em>ZJUT</em><br><i class="fa fa-wechat fa-fw"></i> <em>perfect_means_shit</em><br><i class="fa fa-envelope fa-fw"></i> <a href="&#x6d;&#x61;&#105;&#108;&#116;&#111;&#58;&#x31;&#x30;&#x33;&#x33;&#x31;&#51;&#49;&#x36;&#54;&#x30;&#x40;&#x71;&#x71;&#x2e;&#99;&#111;&#x6d;">&#x31;&#x30;&#x33;&#x33;&#x31;&#51;&#49;&#x36;&#54;&#x30;&#x40;&#x71;&#x71;&#x2e;&#99;&#111;&#x6d;</a></p>
+
+</div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Algorithm/">Algorithm</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/ComputerScience/">ComputerScience</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Image-and-Grapgics/">Image and Grapgics</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Linux/">Linux</a><span class="sidebar-module-list-count">12</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Others/">Others</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Program/">Program</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Tools/">Tools</a><span class="sidebar-module-list-count">1</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/OS/">OS</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/bfs/">bfs</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/c/">c#</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/c-c/">c/c++</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/dfs/">dfs</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/file-system/">file system</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/image-process/">image process</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/json/">json</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/lamp/">lamp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/linux/">linux</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/markdown/">markdown</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/opencv/">opencv</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/particle-filter/">particle filter</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/shell/">shell</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/unix/">unix</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/zjut/">zjut</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/动态规划/">动态规划</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/面试/">面试</a><span class="sidebar-module-list-count">1</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/OS/" style="font-size: 10px;">OS</a> <a href="/tags/bfs/" style="font-size: 10px;">bfs</a> <a href="/tags/c/" style="font-size: 10px;">c#</a> <a href="/tags/c-c/" style="font-size: 17.5px;">c/c++</a> <a href="/tags/dfs/" style="font-size: 10px;">dfs</a> <a href="/tags/file-system/" style="font-size: 12.5px;">file system</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/image-process/" style="font-size: 10px;">image process</a> <a href="/tags/json/" style="font-size: 12.5px;">json</a> <a href="/tags/lamp/" style="font-size: 10px;">lamp</a> <a href="/tags/linux/" style="font-size: 20px;">linux</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/opencv/" style="font-size: 10px;">opencv</a> <a href="/tags/particle-filter/" style="font-size: 10px;">particle filter</a> <a href="/tags/python/" style="font-size: 12.5px;">python</a> <a href="/tags/shell/" style="font-size: 15px;">shell</a> <a href="/tags/unix/" style="font-size: 10px;">unix</a> <a href="/tags/zjut/" style="font-size: 12.5px;">zjut</a> <a href="/tags/动态规划/" style="font-size: 10px;">动态规划</a> <a href="/tags/面试/" style="font-size: 10px;">面试</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/08/">August 2016</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/07/">July 2016</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/06/">June 2016</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/04/">April 2016</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/03/">March 2016</a><span class="sidebar-module-list-count">7</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2016/08/06/bfs-and-dfs/">深度优先搜索与广度优先搜索</a>
+        </li>
+      
+        <li>
+          <a href="/2016/08/05/string-similarity-and-lcs/">字符串相似度以及最长公共子序列</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/29/cloud-music-plugin/">突破网易云音乐播放列表1000限制</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/25/cjson-source-code/">cJSON源码解析(1)</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/25/json/">JSON简介</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Yosef Gao<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+  
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js" integrity="sha384-8gBf6Y4YYq7Jx97PIqmTwLPin4hxIzQw5aDmUg/DDhul9fFpbbLcLh3nTIIDJKhx" crossorigin="anonymous"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

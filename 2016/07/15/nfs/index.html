@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>NFS服务器搭建与演示 | Fantacity</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="NFS(Network File System)的简称，目地就是让不同的机器、不同的操作系统可以彼此共享数据文件，在局域网环境下是共享数据文件的一种简单高效的方式。本文简单介绍NFS服务端与客户端的配置与启动，服务器环境为Arch Linux，客户端环境为Ubuntu 14.04.1。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NFS服务器搭建与演示">
+<meta property="og:url" content="http://yosef-gao.github.io/2016/07/15/nfs/index.html">
+<meta property="og:site_name" content="Fantacity">
+<meta property="og:description" content="NFS(Network File System)的简称，目地就是让不同的机器、不同的操作系统可以彼此共享数据文件，在局域网环境下是共享数据文件的一种简单高效的方式。本文简单介绍NFS服务端与客户端的配置与启动，服务器环境为Arch Linux，客户端环境为Ubuntu 14.04.1。">
+<meta property="og:updated_time" content="2016-09-26T04:22:45.002Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="NFS服务器搭建与演示">
+<meta name="twitter:description" content="NFS(Network File System)的简称，目地就是让不同的机器、不同的操作系统可以彼此共享数据文件，在局域网环境下是共享数据文件的一种简单高效的方式。本文简单介绍NFS服务端与客户端的配置与启动，服务器环境为Arch Linux，客户端环境为Ubuntu 14.04.1。">
+  
+    <link rel="alternate" href="/atom.xml" title="Fantacity" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="https://github.com/yosef-gao">Github</a></li>
+        
+          <li><a class=""
+                 href="/about/aboutme.html">About Me</a></li>
+        
+          <li><a class=""
+                 href="/Links/index.html">Links</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+          <li><a href="/atom.xml" title="RSS Feed"><i class="fa fa-rss"></i></a></li>
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">Fantacity</h1>
+  
+    <p class="lead blog-description">Stand Alone Complex</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-8 blog-main">
+          <article id="post-nfs" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      NFS服务器搭建与演示
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2016/07/15/nfs/" class="article-date"><time datetime="2016-07-15T07:58:08.000Z" itemprop="datePublished">2016-07-15</time></a>
+</div>
+
+    <div class="article-author">yosef gao</div>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Linux/">Linux</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>NFS(Network File System)的简称，目地就是让不同的机器、不同的操作系统可以彼此共享数据文件，在局域网环境下是共享数据文件的一种简单高效的方式。本文简单介绍NFS服务端与客户端的配置与启动，服务器环境为Arch Linux，客户端环境为Ubuntu 14.04.1。</p>
+<a id="more"></a>
+<h2 id="NFS与RPC"><a href="#NFS与RPC" class="headerlink" title="NFS与RPC"></a>NFS与RPC</h2><p>NFS(Network File System)的功能是可以通过网络，让不同的机器、不同的操作系统可以共享彼此的文件，所以，也可以简单地将它看作是一个文件服务器。这个NFS服务器可以让PC将网络中的NFS服务器共享的目录挂载到本地的文件系统中，而在本地的文件系统中看来，那个远程主机的目录就好像是自己的一个磁盘分区一样。</p>
+<p>因为NFS支持的功能相当多，而不同的功能都会使用不同的程序来启动，每启动一个功能就会启用一些端口来传输数据，因此NFS的功能所对应的端口并不固定，而是随即去用一些未被使用的小于1024的端口用于传输。由于客户端连接服务器的时候需要知道相关的端口才能连接，因此这里就需要用到远程过程调用RPC(Remote Procedure Call)的服务了。RPC最主要的功能就是指定每个NFS功能所对应的port number，并通知给客户端，让客户端可以连接到正确的端口去。(那么RPC又是如何知道端口的呢？)当服务器在启动NFS的时候会随即选取数个端口，并主动向RPC注册，因此RPC可以知道每个端口对应的NFS功能。所以，NFS服务器也成为RPC Server之一。</p>
+<h2 id="NFS-Server配置"><a href="#NFS-Server配置" class="headerlink" title="NFS Server配置"></a>NFS Server配置</h2><p><strong>1.安装nfs软件</strong><br>首先需要安装nfs软件，这里以Arch Linux为例。<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">pacman -Sy nfs-utils</div></pre></td></tr></table></figure><br>这样就完成了nfs及其相关服务的安装。ufs-utils主要包括rpc.nfsd以及rpc.mountd这两个NFS daemons以及其他相关documents。</p>
+<p><strong>2.配置文件/etc/exports</strong><br>NFS服务器的搭建十分简单，基本只要编辑好配置文件/etc/exports之后先启动rpcbind，在启动nfs就可以了(当然往复杂说的话还包括权限等一堆问题)。<br>先看一下笔者的局域网环境，arch linux和ubuntu都是在虚拟机下的192.168.26.0/24网段，其中arch linux ip:192.168.26.135。因此/etc/exports文件编辑如下<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">mkdir -p ~/nfs/public	<span class="comment"># 建立共享目录</span></div><div class="line">vim /etc/exports</div><div class="line">/root/nfs/public	192.168.26.0/24(insecure,rw,no_root_squash)</div></pre></td></tr></table></figure><br>来解释一下/etc/exports文件各项的含义：第一列是共享目录，第二列是主机(权限)。其中主机可以有多个，主机后面跟<code>()</code>表示权限，权限之间用<code>,</code>隔开，<strong>注意<code>,</code>之间没有空格</strong>。主机名的设置主要有以下几种方式：</p>
+<ul>
+<li>可以使用完整的IP或者是网络号，例如192.168.100.10或192.168.100.0/24，或192.168.100.0/255.255.255.0都可以接受。</li>
+<li>可以使用主机名，但这个主机名必须要在/etc/hosts内，或可使用DNS找到该名称才行。重点就是可以找到主机名对应的IP就行。如果是主机名的话，那么可以支持通配符，例如<code>*</code>或<code>?</code>均可接受。<br>权限参考下表</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">参数值</th>
+<th style="text-align:left">内容说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">rw<br>ro</td>
+<td style="text-align:left">该目录共享的权限是可读写(read-write)或只读(read-only)，但最终能不能读写，还是与文件系统的rwx及身份有关</td>
+</tr>
+<tr>
+<td style="text-align:left">sync<br>async</td>
+<td style="text-align:left">sync代表数据会同步写入到内存与硬盘中，async则代表数据会先暂存到内存中，而非直接写入硬盘</td>
+</tr>
+<tr>
+<td style="text-align:left">no_root_squash<br>root_sqush</td>
+<td style="text-align:left">客户端使用NFS文件系统的帐号若为root时，默认情况下，客户端root的身份会由root_sqush的设置压缩成nfsnobody，如此对服务器的系统会较有保障。但如果想要开放客户端使用root身份来登陆服务器的文件系统，那么这里就需要开发no_root_squash才行</td>
+</tr>
+<tr>
+<td style="text-align:left">all_squash</td>
+<td style="text-align:left">不论登陆NFS的用户身份为何，他的身份都会被压缩成为匿名用户，通常也就是nobody(nfsnobody)</td>
+</tr>
+<tr>
+<td style="text-align:left">anonuid<br>anongid</td>
+<td style="text-align:left">anon意指anonymous(匿名用户)前面关于*_suqash提到的匿名用户的UID设置值，通常为nobody(nfsnobody)，但是你可以自行设置这个UID的值。当然，这个UID必须要存在于/etc/passwd当中。anonuid指的是UID的值，anongid指的是GID</td>
+</tr>
+</tbody>
+</table>
+<p>这几个都是比较常见的权限参数，其余参数可以参考<code>man exports</code>，其中insecure允许使用大于1024的端口。</p>
+<p><strong>3.启动NFS</strong><br>在arch linux中使用systemctl来启动服务，而有些系统中则使用/etc/init.d/启动<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">[vuser@vuser ~]$ sudo systemctl start nfs-server</div><div class="line"><span class="comment"># 如果启动后需要修改/etc/exports文件，修改完毕之后运行如下命令</span></div><div class="line">exportfs: /etc/exports [2]: Neither <span class="string">'subtree_check'</span> or <span class="string">'no_subtree_check'</span> specified <span class="keyword">for</span> <span class="built_in">export</span> <span class="string">"192.168.26.0/24:/root/nfs/public"</span>.</div><div class="line">  Assuming default behaviour (<span class="string">'no_subtree_check'</span>).</div><div class="line">  NOTE: this default has changed since nfs-utils version 1.0.x</div><div class="line"></div><div class="line">exporting 192.168.26.0/24:/root/nfs/public</div></pre></td></tr></table></figure><br>启动过程中可能会提示一些警告信息，忽略即可。在确认启动没有问题之后，接下来可以看一下NFS到底开启了哪些端口。<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">[vuser@vuser ~]$ sudo netstat -tulnp | grep -E <span class="string">'(rpc|nfs)'</span></div><div class="line">tcp        0      0 0.0.0.0:111             0.0.0.0:*               LISTEN      1770/rpcbind        </div><div class="line">tcp        0      0 0.0.0.0:20048           0.0.0.0:*               LISTEN      2109/rpc.mountd     </div><div class="line">tcp        0      0 0.0.0.0:40757           0.0.0.0:*               LISTEN      1788/rpc.statd      </div><div class="line">tcp6       0      0 :::111                  :::*                    LISTEN      1770/rpcbind        </div><div class="line">tcp6       0      0 :::20048                :::*                    LISTEN      2109/rpc.mountd     </div><div class="line">tcp6       0      0 :::37523                :::*                    LISTEN      1788/rpc.statd      </div><div class="line">udp        0      0 0.0.0.0:36339           0.0.0.0:*                           1788/rpc.statd      </div><div class="line">udp        0      0 0.0.0.0:20048           0.0.0.0:*                           2109/rpc.mountd     </div><div class="line">udp        0      0 0.0.0.0:111             0.0.0.0:*                           1770/rpcbind        </div><div class="line">udp        0      0 0.0.0.0:647             0.0.0.0:*                           1770/rpcbind        </div><div class="line">udp        0      0 127.0.0.1:703           0.0.0.0:*                           1788/rpc.statd      </div><div class="line">udp6       0      0 :::20048                :::*                                2109/rpc.mountd     </div><div class="line">udp6       0      0 :::111                  :::*                                1770/rpcbind        </div><div class="line">udp6       0      0 :::33918                :::*                                1788/rpc.statd      </div><div class="line">udp6       0      0 :::647                  :::*                                1770/rpcbind</div></pre></td></tr></table></figure><br>可以看出，NFS开启了很多port，不过主要的端口是：</p>
+<ul>
+<li>rpcbind启动的port在111，同时启动在udp与tcp。</li>
+<li>NFS本身服务启动在port2049上(不清楚为什么这里没有显示，下文有)。</li>
+<li>其余rpc.*服务启动的port是随机产生的，因此需要向port111注册。<br>常看RPC服务的注册状况使用rpcinfo来查看。<figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">[vuser@vuser ~]$ rpcinfo -p localhost</div><div class="line">   program vers proto   port  service</div><div class="line">    100000    4   tcp    111  portmapper</div><div class="line">    100000    3   tcp    111  portmapper</div><div class="line">    100000    2   tcp    111  portmapper</div><div class="line">    100000    4   udp    111  portmapper</div><div class="line">    100000    3   udp    111  portmapper</div><div class="line">    100000    2   udp    111  portmapper</div><div class="line">    100024    1   udp  36339  status</div><div class="line">    100024    1   tcp  40757  status</div><div class="line">    100005    1   udp  20048  mountd</div><div class="line">    100005    1   tcp  20048  mountd</div><div class="line">    100005    2   udp  20048  mountd</div><div class="line">    100005    2   tcp  20048  mountd</div><div class="line">    100005    3   udp  20048  mountd</div><div class="line">    100005    3   tcp  20048  mountd</div><div class="line">    100003    3   tcp   2049  nfs</div><div class="line">    100003    4   tcp   2049  nfs</div><div class="line">    100227    3   tcp   2049  nfs_acl</div><div class="line">    100003    3   udp   2049  nfs</div><div class="line">    100003    4   udp   2049  nfs</div><div class="line">    100227    3   udp   2049  nfs_acl</div><div class="line">    100021    1   udp  39393  nlockmgr</div><div class="line">    100021    3   udp  39393  nlockmgr</div><div class="line">    100021    4   udp  39393  nlockmgr</div><div class="line">    100021    1   tcp  39027  nlockmgr</div><div class="line">    100021    3   tcp  39027  nlockmgr</div><div class="line">    100021    4   tcp  39027  nlockmgr</div></pre></td></tr></table></figure>
+上面的信息可以与netstat输出的数据做比较，还可以看到nfs支持的版本。</li>
+</ul>
+<p><strong>4.NFS连接</strong><br>需要扫描某一台主机提供的NFS共享目录时，就使用showmount -e IP(或hostname)即可。<br>在笔者的Ubuntu下：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line"><span class="comment"># showmount [-ae] [hostname|IP]</span></div><div class="line"><span class="comment"># -a : 显示当前主机与客户端的NFS连接共享状态</span></div><div class="line"><span class="comment"># -e : 显示某台主机的/etc/exports所共享的目录数据</span></div><div class="line">showmount <span class="_">-e</span> 192.168.26.135</div><div class="line">Export list <span class="keyword">for</span> 192.168.26.135:</div><div class="line">/root/nfs/public 192.168.26.0/24</div><div class="line">vuser@vuser-virtual-machine:~$ </div></pre></td></tr></table></figure><br>客户端关在NFS服务器提供的文件系统步骤如下：</p>
+<ol>
+<li>确认本地端已经启动了rpcbind服务；</li>
+<li>扫描NFS服务器共享的目录有哪些，并了解是否可用；</li>
+<li>在本地建立预计挂载的挂载点目录；</li>
+<li>利用mount将远程主机直接挂载到相关目录。<figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">mkdir -p ~/nfs/public/</div><div class="line">sudo mount -t nfs 192.168.26.135:/root/nfs/public ~/nfs/public/</div><div class="line">mount.nfs: access denied by server <span class="keyword">while</span> mounting 192.168.26.135:/root/nfs/public</div><div class="line"><span class="comment"># 提示access denied</span></div><div class="line">sudo mount -t nfs -o <span class="string">"vers=3"</span> 192.168.26.135:/root/nfs/public ~/nfs/public/</div></pre></td></tr></table></figure>
+这里挂载的时候提示access denied，加上-o “vers=3”即可，参考<a href="http://superuser.com/questions/812382/mounting-nfs-gives-access-denied-by-server-while-mounting-null" target="_blank" rel="external">这里</a>，似乎是和nfs的版本有关。</li>
+</ol>
+<p>到此NFS的基本使用就差不多了，还有更进一步的权限管理，开机挂载以及其他挂载失败的原因请参考鸟哥服务器一书。</p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://yosef-gao.github.io/2016/07/15/nfs/" data-id="citjkzjq5001q20qfumns9oaj" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/file-system/">file system</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2016/07/10/linux-resource-cmd/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">Linux资源查看</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2016/07/16/archlinux-lamp-environment/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">Arch Linux下LAMP环境搭建</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+
+
+        </div>
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          
+  <div class="sidebar-module sidebar-module-inset">
+  <h4>About</h4>
+  <p>Hi, I am yosef gao.</p>
+<p>Graduate student of Zhejiang University of technology.</p>
+<p>Major in Image and Graphics. Mainly use c/c++, familiar with c#.</p>
+<p>I’m now learing server development.</p>
+<p><i class="fa fa-user fa-fw"></i> <em>yosef gao</em><br><i class="fa fa-graduation-cap fa-fw"></i> <em>ZJUT</em><br><i class="fa fa-wechat fa-fw"></i> <em>perfect_means_shit</em><br><i class="fa fa-envelope fa-fw"></i> <a href="&#x6d;&#x61;&#105;&#108;&#116;&#111;&#58;&#x31;&#x30;&#x33;&#x33;&#x31;&#51;&#49;&#x36;&#54;&#x30;&#x40;&#x71;&#x71;&#x2e;&#99;&#111;&#x6d;">&#x31;&#x30;&#x33;&#x33;&#x31;&#51;&#49;&#x36;&#54;&#x30;&#x40;&#x71;&#x71;&#x2e;&#99;&#111;&#x6d;</a></p>
+
+</div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Algorithm/">Algorithm</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/ComputerScience/">ComputerScience</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Image-and-Grapgics/">Image and Grapgics</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Linux/">Linux</a><span class="sidebar-module-list-count">12</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Others/">Others</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Program/">Program</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Tools/">Tools</a><span class="sidebar-module-list-count">1</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/OS/">OS</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/bfs/">bfs</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/c/">c#</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/c-c/">c/c++</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/dfs/">dfs</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/file-system/">file system</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/image-process/">image process</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/json/">json</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/lamp/">lamp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/linux/">linux</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/markdown/">markdown</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/opencv/">opencv</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/particle-filter/">particle filter</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/shell/">shell</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/unix/">unix</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/zjut/">zjut</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/动态规划/">动态规划</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/面试/">面试</a><span class="sidebar-module-list-count">1</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/OS/" style="font-size: 10px;">OS</a> <a href="/tags/bfs/" style="font-size: 10px;">bfs</a> <a href="/tags/c/" style="font-size: 10px;">c#</a> <a href="/tags/c-c/" style="font-size: 17.5px;">c/c++</a> <a href="/tags/dfs/" style="font-size: 10px;">dfs</a> <a href="/tags/file-system/" style="font-size: 12.5px;">file system</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/image-process/" style="font-size: 10px;">image process</a> <a href="/tags/json/" style="font-size: 12.5px;">json</a> <a href="/tags/lamp/" style="font-size: 10px;">lamp</a> <a href="/tags/linux/" style="font-size: 20px;">linux</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/opencv/" style="font-size: 10px;">opencv</a> <a href="/tags/particle-filter/" style="font-size: 10px;">particle filter</a> <a href="/tags/python/" style="font-size: 12.5px;">python</a> <a href="/tags/shell/" style="font-size: 15px;">shell</a> <a href="/tags/unix/" style="font-size: 10px;">unix</a> <a href="/tags/zjut/" style="font-size: 12.5px;">zjut</a> <a href="/tags/动态规划/" style="font-size: 10px;">动态规划</a> <a href="/tags/面试/" style="font-size: 10px;">面试</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/08/">August 2016</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/07/">July 2016</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/06/">June 2016</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/04/">April 2016</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/03/">March 2016</a><span class="sidebar-module-list-count">7</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2016/08/06/bfs-and-dfs/">深度优先搜索与广度优先搜索</a>
+        </li>
+      
+        <li>
+          <a href="/2016/08/05/string-similarity-and-lcs/">字符串相似度以及最长公共子序列</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/29/cloud-music-plugin/">突破网易云音乐播放列表1000限制</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/25/cjson-source-code/">cJSON源码解析(1)</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/25/json/">JSON简介</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Yosef Gao<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+  
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js" integrity="sha384-8gBf6Y4YYq7Jx97PIqmTwLPin4hxIzQw5aDmUg/DDhul9fFpbbLcLh3nTIIDJKhx" crossorigin="anonymous"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

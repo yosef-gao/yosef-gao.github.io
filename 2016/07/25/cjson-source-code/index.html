@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>cJSON源码解析(1) | Fantacity</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="cJSON是一个轻巧的，ANSI-C标准的json解析库，其代码只有1000+行，写得非常漂亮，适合用来学习。本文结合cjson的源码简单分析该json库。学习cJSON之前可以先看一下json的简介。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="cJSON源码解析(1)">
+<meta property="og:url" content="http://yosef-gao.github.io/2016/07/25/cjson-source-code/index.html">
+<meta property="og:site_name" content="Fantacity">
+<meta property="og:description" content="cJSON是一个轻巧的，ANSI-C标准的json解析库，其代码只有1000+行，写得非常漂亮，适合用来学习。本文结合cjson的源码简单分析该json库。学习cJSON之前可以先看一下json的简介。">
+<meta property="og:image" content="http://yosef-gao.github.io/2016/07/25/cjson-source-code/string.gif">
+<meta property="og:image" content="http://yosef-gao.github.io/2016/07/25/cjson-source-code/number.gif">
+<meta property="og:updated_time" content="2016-09-26T04:22:45.033Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="cJSON源码解析(1)">
+<meta name="twitter:description" content="cJSON是一个轻巧的，ANSI-C标准的json解析库，其代码只有1000+行，写得非常漂亮，适合用来学习。本文结合cjson的源码简单分析该json库。学习cJSON之前可以先看一下json的简介。">
+<meta name="twitter:image" content="http://yosef-gao.github.io/2016/07/25/cjson-source-code/string.gif">
+  
+    <link rel="alternate" href="/atom.xml" title="Fantacity" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="https://github.com/yosef-gao">Github</a></li>
+        
+          <li><a class=""
+                 href="/about/aboutme.html">About Me</a></li>
+        
+          <li><a class=""
+                 href="/Links/index.html">Links</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+          <li><a href="/atom.xml" title="RSS Feed"><i class="fa fa-rss"></i></a></li>
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">Fantacity</h1>
+  
+    <p class="lead blog-description">Stand Alone Complex</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-8 blog-main">
+          <article id="post-cjson-source-code" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      cJSON源码解析(1)
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2016/07/25/cjson-source-code/" class="article-date"><time datetime="2016-07-25T11:39:32.000Z" itemprop="datePublished">2016-07-25</time></a>
+</div>
+
+    <div class="article-author">yosef gao</div>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Program/">Program</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>cJSON是一个轻巧的，ANSI-C标准的json解析库，其代码只有1000+行，写得非常漂亮，适合用来学习。本文结合cjson的源码简单分析该json库。学习cJSON之前可以先看一下<a href="/2016/07/25/json/#more">json的简介</a>。</p>
+<a id="more"></a>
+<h2 id="数据结构定义"><a href="#数据结构定义" class="headerlink" title="数据结构定义"></a>数据结构定义</h2><p>json里面的数据有7形式，在cJSON中定义如下：<br><figure class="highlight"><table><tr><td class="code"><pre><div class="line">/* cJSON Types: */</div><div class="line">#define cJSON_False  (1 &lt;&lt; 0)</div><div class="line">#define cJSON_True   (1 &lt;&lt; 1)</div><div class="line">#define cJSON_NULL   (1 &lt;&lt; 2)</div><div class="line">#define cJSON_Number (1 &lt;&lt; 3)</div><div class="line">#define cJSON_String (1 &lt;&lt; 4)</div><div class="line">#define cJSON_Array  (1 &lt;&lt; 5)</div><div class="line">#define cJSON_Object (1 &lt;&lt; 6)</div><div class="line"></div><div class="line">/* 这两种定义在下文中会有描述 */</div><div class="line">#define cJSON_IsReference 256</div><div class="line">#define cJSON_StringIsConst 512</div></pre></td></tr></table></figure></p>
+<p>json数据的采用了树的形式存储，其中每一个节点cJSON的定义如下：<br><figure class="highlight c"><table><tr><td class="code"><pre><div class="line"><span class="comment">/* cJSON结构: */</span></div><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> cJSON &#123;</div><div class="line">	<span class="keyword">struct</span> cJSON *next,*prev;	<span class="comment">/* 双向链表的next和prev指针，指向该节点的兄弟节点 */</span></div><div class="line">	<span class="keyword">struct</span> cJSON *child;		<span class="comment">/* 子节点指针 */</span></div><div class="line"></div><div class="line">	<span class="keyword">int</span> type;			<span class="comment">/* 节点的数据类型，就是上面定义的7+2种 */</span></div><div class="line"></div><div class="line">	<span class="keyword">char</span> *valuestring;		<span class="comment">/* 如果type==cJSON_String，那么这个指针指向了存放字符串的内存 */</span></div><div class="line">	<span class="keyword">int</span> valueint;			<span class="comment">/* 如果type==cJSON_Number，那么存放了数字的值(int 型) */</span></div><div class="line">	<span class="keyword">double</span> valuedouble;		<span class="comment">/* 如果type==cJSON_Number，那么存放了数字的值(double 型) */</span></div><div class="line"></div><div class="line">	<span class="keyword">char</span> *<span class="built_in">string</span>;			<span class="comment">/* 如果是对象的key-value元素的话，存放了key值 */</span></div><div class="line">&#125; cJSON;</div></pre></td></tr></table></figure></p>
+<h2 id="解析类函数"><a href="#解析类函数" class="headerlink" title="解析类函数"></a>解析类函数</h2><p>cJSON定义了许多函数，我把这些函数做了简单的分类，大致可以分为4类：解析类函数，打印类函数，节点操作类函数(节点增删查改)，其他函数。首先先来看一下解析类函数。解析类函数中最重要的就是<code>cJSON_Parse</code>，该函数传入一个json字符串，并把他解析成cJSON格式的链表。<br><figure class="highlight c"><table><tr><td class="code"><pre><div class="line"><span class="comment">/* Default options for cJSON_Parse */</span></div><div class="line"><span class="function">cJSON *<span class="title">cJSON_Parse</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span> *value)</span> </span>&#123;<span class="keyword">return</span> cJSON_ParseWithOpts(value,<span class="number">0</span>,<span class="number">0</span>);&#125;</div></pre></td></tr></table></figure><br>该函数调用了<code>cJSON_ParseWithOpts</code>函数，在这个函数中，省略其他细枝末节，最关键的是调用了<code>parse_value</code>函数，其函数定义如下：<br><figure class="highlight c"><table><tr><td class="code"><pre><div class="line"><span class="comment">/* Parser core - when encountering text, process appropriately. */</span></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">char</span> *<span class="title">parse_value</span><span class="params">(cJSON *item,<span class="keyword">const</span> <span class="keyword">char</span> *value,<span class="keyword">const</span> <span class="keyword">char</span> **ep)</span></span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">if</span> (!value)						<span class="keyword">return</span> <span class="number">0</span>;	<span class="comment">/* Fail on null. */</span></div><div class="line">	<span class="keyword">if</span> (!<span class="built_in">strncmp</span>(value,<span class="string">"null"</span>,<span class="number">4</span>))	&#123; item-&gt;type=cJSON_NULL;  <span class="keyword">return</span> value+<span class="number">4</span>; &#125;</div><div class="line">	<span class="keyword">if</span> (!<span class="built_in">strncmp</span>(value,<span class="string">"false"</span>,<span class="number">5</span>))	&#123; item-&gt;type=cJSON_False; <span class="keyword">return</span> value+<span class="number">5</span>; &#125;</div><div class="line">	<span class="keyword">if</span> (!<span class="built_in">strncmp</span>(value,<span class="string">"true"</span>,<span class="number">4</span>))	&#123; item-&gt;type=cJSON_True; item-&gt;valueint=<span class="number">1</span>;	<span class="keyword">return</span> value+<span class="number">4</span>; &#125;</div><div class="line">	<span class="keyword">if</span> (*value==<span class="string">'\"'</span>)				&#123; <span class="keyword">return</span> parse_string(item,value,ep); &#125;</div><div class="line">	<span class="keyword">if</span> (*value==<span class="string">'-'</span> || (*value&gt;=<span class="string">'0'</span> &amp;&amp; *value&lt;=<span class="string">'9'</span>))	&#123; <span class="keyword">return</span> parse_number(item,value); &#125;</div><div class="line">	<span class="keyword">if</span> (*value==<span class="string">'['</span>)				&#123; <span class="keyword">return</span> parse_array(item,value,ep); &#125;</div><div class="line">	<span class="keyword">if</span> (*value==<span class="string">'&#123;'</span>)				&#123; <span class="keyword">return</span> parse_object(item,value,ep); &#125;</div><div class="line"></div><div class="line">	*ep=value;<span class="keyword">return</span> <span class="number">0</span>;	<span class="comment">/* failure. */</span></div><div class="line">&#125;</div></pre></td></tr></table></figure><br>该函数是解析json字符串的核心函数，通过比较字符串的首个字符来判数据类型，并调用相应数据类型的解析函数来解析，比如字符串以<code>&quot;</code>开头，那么可以假设后面的数据类型是字符串类型，调用<code>parse_string</code>函数来解析。当然，这里只是假设后面是字符串类型，如果解析下去发现格式不符，那么就报错返回。由于json数据类型之间是可以相互嵌套的，比如对象类型里面可以嵌套数组类型，数组类型里面又可以嵌套对象类型，因此，解析的时候其实也是一个函数递归调用的过程。</p>
+<p>下面来看<code>parse_string</code>解析函数：<br><figure class="highlight c"><table><tr><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">char</span> *<span class="title">parse_string</span><span class="params">(cJSON *item,<span class="keyword">const</span> <span class="keyword">char</span> *str,<span class="keyword">const</span> <span class="keyword">char</span> **ep)</span></span></div><div class="line">&#123;</div><div class="line">	<span class="comment">/* 省略部分代码 */</span></div><div class="line">	<span class="keyword">while</span> (*end_ptr!=<span class="string">'\"'</span> &amp;&amp; *end_ptr &amp;&amp; ++len) <span class="keyword">if</span> (*end_ptr++ == <span class="string">'\\'</span>) end_ptr++;	<span class="comment">/* 计算字符串的长度 */</span></div><div class="line">	out=(<span class="keyword">char</span>*)cJSON_malloc(len+<span class="number">1</span>);	</div><div class="line">	<span class="keyword">if</span> (!out) <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">	item-&gt;valuestring=out; <span class="comment">/* assign here so out will be deleted during cJSON_Delete() later */</span></div><div class="line">	item-&gt;type=cJSON_String;</div><div class="line">	<span class="comment">/* 省略部分代码 */</span></div><div class="line">	<span class="keyword">while</span> (ptr &lt; end_ptr)</div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span> (*ptr!=<span class="string">'\\'</span>) *ptr2++=*ptr++;</div><div class="line">		<span class="keyword">else</span></div><div class="line">		&#123;</div><div class="line">			ptr++;</div><div class="line">			<span class="keyword">switch</span> (*ptr)</div><div class="line">			&#123;</div><div class="line">				<span class="keyword">case</span> <span class="string">'b'</span>: *ptr2++=<span class="string">'\b'</span>;	<span class="keyword">break</span>;</div><div class="line">				<span class="keyword">case</span> <span class="string">'f'</span>: *ptr2++=<span class="string">'\f'</span>;	<span class="keyword">break</span>;</div><div class="line">				<span class="keyword">case</span> <span class="string">'n'</span>: *ptr2++=<span class="string">'\n'</span>;	<span class="keyword">break</span>;</div><div class="line">				<span class="keyword">case</span> <span class="string">'r'</span>: *ptr2++=<span class="string">'\r'</span>;	<span class="keyword">break</span>;</div><div class="line">				<span class="keyword">case</span> <span class="string">'t'</span>: *ptr2++=<span class="string">'\t'</span>;	<span class="keyword">break</span>;</div><div class="line">				<span class="keyword">case</span> <span class="string">'u'</span>:	 <span class="comment">/* transcode utf16 to utf8. */</span></div><div class="line">					uc=parse_hex4(ptr+<span class="number">1</span>);ptr+=<span class="number">4</span>;	<span class="comment">/* get the unicode char. */</span></div><div class="line">					<span class="comment">/* 省略部分代码 */</span></div><div class="line">				<span class="keyword">default</span>:  *ptr2++=*ptr; <span class="keyword">break</span>;</div><div class="line">			&#125;</div><div class="line">			ptr++;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="comment">/* 省略部分代码 */</span></div><div class="line">	<span class="keyword">return</span> ptr;</div><div class="line">&#125;</div></pre></td></tr></table></figure><br>可以看到，整个函数的框架就是按照下图的状态机来解析json字符串的。函数首先计算字符串的长度，即寻找字符串的结尾<code>&quot;</code>，并且计算长度的时候跳过转义符<code>\</code>。计算完长度之后为字符串分配相应的内存空间，并把字符逐个拷贝到分配的内存空间中。拷贝的过程中需要处理几个特殊的转义字符以及unicode字符(以\u开头)，其中unicode通过<code>parse_hex4</code>函数特殊处理，这个函数就不详细展开了。<br><img src="/2016/07/25/cjson-source-code/string.gif" alt="string" title="string"></p>
+<p><code>parse_number</code>函数用于解析数字，其函数定义如下：<br><figure class="highlight c"><table><tr><td class="code"><pre><div class="line"><span class="comment">/* Parse the input text to generate a number, and populate the result into item. */</span></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">char</span> *<span class="title">parse_number</span><span class="params">(cJSON *item,<span class="keyword">const</span> <span class="keyword">char</span> *num)</span></span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">double</span> n=<span class="number">0</span>,sign=<span class="number">1</span>,scale=<span class="number">0</span>;<span class="keyword">int</span> subscale=<span class="number">0</span>,signsubscale=<span class="number">1</span>;</div><div class="line"></div><div class="line">	<span class="keyword">if</span> (*num==<span class="string">'-'</span>) sign=<span class="number">-1</span>,num++;			<span class="comment">/* 符号 */</span></div><div class="line">	<span class="keyword">if</span> (*num==<span class="string">'0'</span>) num++;				<span class="comment">/* is zero */</span></div><div class="line">	<span class="keyword">if</span> (*num&gt;=<span class="string">'1'</span> &amp;&amp; *num&lt;=<span class="string">'9'</span>) &#123;</div><div class="line">		<span class="keyword">do</span></div><div class="line">			n=(n*<span class="number">10.0</span>)+(*num++ -<span class="string">'0'</span>);</div><div class="line">		<span class="keyword">while</span> (*num&gt;=<span class="string">'0'</span> &amp;&amp; *num&lt;=<span class="string">'9'</span>);		<span class="comment">/* 整数部分 */</span></div><div class="line">	&#125;</div><div class="line">	<span class="keyword">if</span> (*num==<span class="string">'.'</span> &amp;&amp; num[<span class="number">1</span>]&gt;=<span class="string">'0'</span> &amp;&amp; num[<span class="number">1</span>]&lt;=<span class="string">'9'</span>) &#123;</div><div class="line">		num++;		</div><div class="line">		<span class="keyword">do</span>	</div><div class="line">			n=(n*<span class="number">10.0</span>)+(*num++ -<span class="string">'0'</span>),scale--; </div><div class="line">		<span class="keyword">while</span> (*num&gt;=<span class="string">'0'</span> &amp;&amp; *num&lt;=<span class="string">'9'</span>);</div><div class="line">	&#125;						<span class="comment">/* 小数部分 */</span></div><div class="line">	<span class="keyword">if</span> (*num==<span class="string">'e'</span> || *num==<span class="string">'E'</span>) &#123;			<span class="comment">/* 指数部分 */</span></div><div class="line">		num++;</div><div class="line">		<span class="keyword">if</span> (*num==<span class="string">'+'</span>) </div><div class="line">			num++;	</div><div class="line">		<span class="keyword">else</span> <span class="keyword">if</span> (*num==<span class="string">'-'</span>) </div><div class="line">			signsubscale=<span class="number">-1</span>,num++;		<span class="comment">/* With sign? */</span></div><div class="line">		<span class="keyword">while</span> (*num&gt;=<span class="string">'0'</span> &amp;&amp; *num&lt;=<span class="string">'9'</span>) </div><div class="line">			subscale=(subscale*<span class="number">10</span>)+(*num++ - <span class="string">'0'</span>);	<span class="comment">/* Number? */</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	n=sign*n*<span class="built_in">pow</span>(<span class="number">10.0</span>,(scale+subscale*signsubscale));	<span class="comment">/* number = +/- number.fraction * 10^+/- exponent */</span></div><div class="line">	</div><div class="line">	item-&gt;valuedouble=n;</div><div class="line">	item-&gt;valueint=(<span class="keyword">int</span>)n;</div><div class="line">	item-&gt;type=cJSON_Number;</div><div class="line">	<span class="keyword">return</span> num;</div><div class="line">&#125;</div></pre></td></tr></table></figure><br>为了能看清代码，我对源代码的格式稍微做了调整。同样的，对于数字的解析也是对下图状态机的一个实现，对照图看代码部分很清晰。<br><img src="/2016/07/25/cjson-source-code/number.gif" alt="number" title="number"></p>
+<p><code>parse_array</code>函数用于解析数组，其定义如下：<br><figure class="highlight c"><table><tr><td class="code"><pre><div class="line"><span class="comment">/* Build an array from input text. */</span></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">char</span> *<span class="title">parse_array</span><span class="params">(cJSON *item,<span class="keyword">const</span> <span class="keyword">char</span> *value,<span class="keyword">const</span> <span class="keyword">char</span> **ep)</span></span></div><div class="line">&#123;</div><div class="line">	<span class="comment">/* ... */</span></div><div class="line">	value=skip(parse_value(child,skip(value),ep));	<span class="comment">/* skip any spacing, get the value. */</span></div><div class="line">	<span class="keyword">if</span> (!value) <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line"></div><div class="line">	<span class="keyword">while</span> (*value==<span class="string">','</span>)</div><div class="line">	&#123;</div><div class="line">		cJSON *new_item;</div><div class="line">		<span class="keyword">if</span> (!(new_item=cJSON_New_Item())) <span class="keyword">return</span> <span class="number">0</span>; 	<span class="comment">/* memory fail */</span></div><div class="line">		child-&gt;next=new_item;new_item-&gt;prev=child;child=new_item;</div><div class="line">		value=skip(parse_value(child,skip(value+<span class="number">1</span>),ep));</div><div class="line">		<span class="keyword">if</span> (!value) <span class="keyword">return</span> <span class="number">0</span>;	<span class="comment">/* memory fail */</span></div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="keyword">if</span> (*value==<span class="string">']'</span>) <span class="keyword">return</span> value+<span class="number">1</span>;	<span class="comment">/* end of array */</span></div><div class="line">	*ep=value;<span class="keyword">return</span> <span class="number">0</span>;	<span class="comment">/* malformed. */</span></div><div class="line">&#125;</div></pre></td></tr></table></figure><br>数组是用于存放别的数据的数据类型，因此对于数组的解析，除了解析<code>[</code>和<code>]</code>外，剩下的就是对内部value的解析，所以只需要对数组内每一个元素调用<code>parse_value</code>即可，从这里也体现出，对json的解析其实是一个递归的过程。数组内的每两个元素之间用<code>,</code>隔开，数组内的元素之间是兄弟关系，所以需要指定好他们的前一个节点以及后一个节点的指针。</p>
+<p><code>parse_object</code>函数用于解析对象，其定义如下：<br><figure class="highlight c"><table><tr><td class="code"><pre><div class="line"><span class="comment">/* Build an object from the text. */</span></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">const</span> <span class="keyword">char</span> *<span class="title">parse_object</span><span class="params">(cJSON *item,<span class="keyword">const</span> <span class="keyword">char</span> *value,<span class="keyword">const</span> <span class="keyword">char</span> **ep)</span></span></div><div class="line">&#123;</div><div class="line">	<span class="comment">/* ... */</span></div><div class="line">	value=skip(parse_string(child,skip(value),ep)); <span class="comment">/* 解析key的名字 */</span></div><div class="line">	<span class="keyword">if</span> (!value) <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">	child-&gt;<span class="built_in">string</span>=child-&gt;valuestring;child-&gt;valuestring=<span class="number">0</span>;</div><div class="line"></div><div class="line">	<span class="comment">/* 解析key-value间的: */</span></div><div class="line">	<span class="keyword">if</span> (*value!=<span class="string">':'</span>) &#123;*ep=value;<span class="keyword">return</span> <span class="number">0</span>;&#125;	<span class="comment">/* fail! */</span></div><div class="line">	<span class="comment">/* 解析key-value中的value */</span></div><div class="line">	value=skip(parse_value(child,skip(value+<span class="number">1</span>),ep));	<span class="comment">/* skip any spacing, get the value. */</span></div><div class="line">	<span class="keyword">if</span> (!value) <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">	</div><div class="line">	<span class="comment">/* 循环解析key-value pair */</span></div><div class="line">	<span class="keyword">while</span> (*value==<span class="string">','</span>)</div><div class="line">	&#123;</div><div class="line">		cJSON *new_item;</div><div class="line">		<span class="keyword">if</span> (!(new_item=cJSON_New_Item()))	<span class="keyword">return</span> <span class="number">0</span>; <span class="comment">/* memory fail */</span></div><div class="line">		child-&gt;next=new_item;new_item-&gt;prev=child;child=new_item;</div><div class="line">		value=skip(parse_string(child,skip(value+<span class="number">1</span>),ep));</div><div class="line">		<span class="keyword">if</span> (!value) <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">		child-&gt;<span class="built_in">string</span>=child-&gt;valuestring;child-&gt;valuestring=<span class="number">0</span>;</div><div class="line">		<span class="keyword">if</span> (*value!=<span class="string">':'</span>) &#123;*ep=value;<span class="keyword">return</span> <span class="number">0</span>;&#125;	<span class="comment">/* fail! */</span></div><div class="line">		value=skip(parse_value(child,skip(value+<span class="number">1</span>),ep));	<span class="comment">/* skip any spacing, get the value. */</span></div><div class="line">		<span class="keyword">if</span> (!value) <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	<span class="keyword">if</span> (*value==<span class="string">'&#125;'</span>) <span class="keyword">return</span> value+<span class="number">1</span>;	<span class="comment">/* end of array */</span></div><div class="line">	*ep=value;<span class="keyword">return</span> <span class="number">0</span>;	<span class="comment">/* malformed. */</span></div><div class="line">&#125;</div></pre></td></tr></table></figure><br>对象用于存放多个无序的键值对，其中键是string类型，值可以是任意类型。其解析过程同对数组的解析过程类似，首先解析key，因为key是string类型，调用parse_string获得key的名字，接着解析value，调用parse_value。如果有<code>,</code>则表明还有key-value对，接着循环解析。</p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://yosef-gao.github.io/2016/07/25/cjson-source-code/" data-id="citjkzjqt002120qfyngqqarl" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c-c/">c/c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/json/">json</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2016/07/25/json/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">JSON简介</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2016/07/29/cloud-music-plugin/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">突破网易云音乐播放列表1000限制</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+
+
+        </div>
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          
+  <div class="sidebar-module sidebar-module-inset">
+  <h4>About</h4>
+  <p>Hi, I am yosef gao.</p>
+<p>Graduate student of Zhejiang University of technology.</p>
+<p>Major in Image and Graphics. Mainly use c/c++, familiar with c#.</p>
+<p>I’m now learing server development.</p>
+<p><i class="fa fa-user fa-fw"></i> <em>yosef gao</em><br><i class="fa fa-graduation-cap fa-fw"></i> <em>ZJUT</em><br><i class="fa fa-wechat fa-fw"></i> <em>perfect_means_shit</em><br><i class="fa fa-envelope fa-fw"></i> <a href="&#x6d;&#x61;&#105;&#108;&#116;&#111;&#58;&#x31;&#x30;&#x33;&#x33;&#x31;&#51;&#49;&#x36;&#54;&#x30;&#x40;&#x71;&#x71;&#x2e;&#99;&#111;&#x6d;">&#x31;&#x30;&#x33;&#x33;&#x31;&#51;&#49;&#x36;&#54;&#x30;&#x40;&#x71;&#x71;&#x2e;&#99;&#111;&#x6d;</a></p>
+
+</div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Algorithm/">Algorithm</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/ComputerScience/">ComputerScience</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Image-and-Grapgics/">Image and Grapgics</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Linux/">Linux</a><span class="sidebar-module-list-count">12</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Others/">Others</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Program/">Program</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Tools/">Tools</a><span class="sidebar-module-list-count">1</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/OS/">OS</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/bfs/">bfs</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/c/">c#</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/c-c/">c/c++</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/dfs/">dfs</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/file-system/">file system</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/image-process/">image process</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/json/">json</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/lamp/">lamp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/linux/">linux</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/markdown/">markdown</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/opencv/">opencv</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/particle-filter/">particle filter</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/shell/">shell</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/unix/">unix</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/zjut/">zjut</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/动态规划/">动态规划</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/面试/">面试</a><span class="sidebar-module-list-count">1</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/OS/" style="font-size: 10px;">OS</a> <a href="/tags/bfs/" style="font-size: 10px;">bfs</a> <a href="/tags/c/" style="font-size: 10px;">c#</a> <a href="/tags/c-c/" style="font-size: 17.5px;">c/c++</a> <a href="/tags/dfs/" style="font-size: 10px;">dfs</a> <a href="/tags/file-system/" style="font-size: 12.5px;">file system</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/image-process/" style="font-size: 10px;">image process</a> <a href="/tags/json/" style="font-size: 12.5px;">json</a> <a href="/tags/lamp/" style="font-size: 10px;">lamp</a> <a href="/tags/linux/" style="font-size: 20px;">linux</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/opencv/" style="font-size: 10px;">opencv</a> <a href="/tags/particle-filter/" style="font-size: 10px;">particle filter</a> <a href="/tags/python/" style="font-size: 12.5px;">python</a> <a href="/tags/shell/" style="font-size: 15px;">shell</a> <a href="/tags/unix/" style="font-size: 10px;">unix</a> <a href="/tags/zjut/" style="font-size: 12.5px;">zjut</a> <a href="/tags/动态规划/" style="font-size: 10px;">动态规划</a> <a href="/tags/面试/" style="font-size: 10px;">面试</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/08/">August 2016</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/07/">July 2016</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/06/">June 2016</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/04/">April 2016</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/03/">March 2016</a><span class="sidebar-module-list-count">7</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2016/08/06/bfs-and-dfs/">深度优先搜索与广度优先搜索</a>
+        </li>
+      
+        <li>
+          <a href="/2016/08/05/string-similarity-and-lcs/">字符串相似度以及最长公共子序列</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/29/cloud-music-plugin/">突破网易云音乐播放列表1000限制</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/25/cjson-source-code/">cJSON源码解析(1)</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/25/json/">JSON简介</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Yosef Gao<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+  
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js" integrity="sha384-8gBf6Y4YYq7Jx97PIqmTwLPin4hxIzQw5aDmUg/DDhul9fFpbbLcLh3nTIIDJKhx" crossorigin="anonymous"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

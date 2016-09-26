@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>深度优先搜索与广度优先搜索 | Fantacity</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="今天做笔试题遇到两个很有代表性的题目，分别用到了广度优先搜索和深度优先搜索，可以记录并分析一下。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深度优先搜索与广度优先搜索">
+<meta property="og:url" content="http://yosef-gao.github.io/2016/08/06/bfs-and-dfs/index.html">
+<meta property="og:site_name" content="Fantacity">
+<meta property="og:description" content="今天做笔试题遇到两个很有代表性的题目，分别用到了广度优先搜索和深度优先搜索，可以记录并分析一下。">
+<meta property="og:updated_time" content="2016-09-26T04:22:45.164Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深度优先搜索与广度优先搜索">
+<meta name="twitter:description" content="今天做笔试题遇到两个很有代表性的题目，分别用到了广度优先搜索和深度优先搜索，可以记录并分析一下。">
+  
+    <link rel="alternate" href="/atom.xml" title="Fantacity" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="https://github.com/yosef-gao">Github</a></li>
+        
+          <li><a class=""
+                 href="/about/aboutme.html">About Me</a></li>
+        
+          <li><a class=""
+                 href="/Links/index.html">Links</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+          <li><a href="/atom.xml" title="RSS Feed"><i class="fa fa-rss"></i></a></li>
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">Fantacity</h1>
+  
+    <p class="lead blog-description">Stand Alone Complex</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-8 blog-main">
+          <article id="post-bfs-and-dfs" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      深度优先搜索与广度优先搜索
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2016/08/06/bfs-and-dfs/" class="article-date"><time datetime="2016-08-06T06:43:17.000Z" itemprop="datePublished">2016-08-06</time></a>
+</div>
+
+    
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Algorithm/">Algorithm</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>今天做笔试题遇到两个很有代表性的题目，分别用到了广度优先搜索和深度优先搜索，可以记录并分析一下。<br><a id="more"></a></p>
+<h2 id="广度优先搜索"><a href="#广度优先搜索" class="headerlink" title="广度优先搜索"></a>广度优先搜索</h2><p>首先来看一下题目：<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">题目描述</div><div class="line">定义一个二维数组N*M(其中2&lt;=N&lt;=10;2&lt;=M&lt;=10)，如5 × 5数组下所示： </div><div class="line">int maze[5][5] = &#123;</div><div class="line"></div><div class="line">        0, 1, 0, 0, 0,</div><div class="line"></div><div class="line">        0, 1, 0, 1, 0,</div><div class="line"></div><div class="line">        0, 0, 0, 0, 0,</div><div class="line"></div><div class="line">        0, 1, 1, 1, 0,</div><div class="line"></div><div class="line">        0, 0, 0, 1, 0,</div><div class="line"></div><div class="line">&#125;;</div><div class="line">它表示一个迷宫，其中的1表示墙壁，0表示可以走的路，只能横着走或竖着走，</div><div class="line">不能斜着走，要求编程序找出从左上角到右下角的最短路线。</div><div class="line">入口点为[0,0],既第一空格是可以走的路。</div><div class="line">Input</div><div class="line">一个N × M的二维数组，表示一个迷宫。数据保证有唯一解,不考虑有多解的情况，即迷宫只有一条通道。</div><div class="line">Output</div><div class="line">左上角到右下角的最短路径，格式如样例所示。</div><div class="line">Sample Input</div><div class="line">0 1 0 0 0</div><div class="line">0 1 0 1 0</div><div class="line">0 0 0 0 0</div><div class="line">0 1 1 1 0</div><div class="line">0 0 0 1 0</div><div class="line">Sample Output</div><div class="line">(0, 0)</div><div class="line">(1, 0)</div><div class="line">(2, 0)</div><div class="line">(2, 1)</div><div class="line">(2, 2)</div><div class="line">(2, 3)</div><div class="line">(2, 4)</div><div class="line">(3, 4)</div><div class="line">(4, 4)</div></pre></td></tr></table></figure></p>
+<p>从題意来看的话因为要搜索的是最短路径，所有应该是用广度优先搜索算法没跑了。<br>广度优先搜索(Breadth First Search, BFS)，又叫宽度优先搜索，是一种穷举的搜索算法，算法把所有展开的节点放入一个先进先出的队列中，依次搜索解，因此，如果算法有解的话，一定是最优解或最优解之一。BFS常用队列或链表实现。</p>
+<p>直接上代码：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;list&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> node</div><div class="line">&#123;</div><div class="line">	<span class="keyword">int</span> x;</div><div class="line">	<span class="keyword">int</span> y;</div><div class="line">	<span class="keyword">int</span> id;	<span class="comment">// 节点ID</span></div><div class="line">	<span class="keyword">int</span> patent;	<span class="comment">// 父节点ID</span></div><div class="line">&#125;node;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">bool</span> <span class="title">isvalid</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y, <span class="keyword">int</span> m, <span class="keyword">int</span> n)</span></span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">if</span> (x &gt;= <span class="number">0</span> &amp;&amp; x &lt; m &amp;&amp;</div><div class="line">		y &gt;= <span class="number">0</span> &amp;&amp; y &lt; n)</div><div class="line">		<span class="keyword">return</span> <span class="literal">true</span>;</div><div class="line">	<span class="keyword">return</span> <span class="literal">false</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">BFS</span><span class="params">(<span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; &amp;maze, <span class="built_in">vector</span>&lt;node&gt; &amp;node_table, <span class="keyword">int</span> start_x, <span class="keyword">int</span> start_y, <span class="keyword">int</span> end_x, <span class="keyword">int</span> end_y)</span></span></div><div class="line">&#123;</div><div class="line">	<span class="comment">// 基本思想，广度优先，找最短路径</span></div><div class="line">	<span class="keyword">int</span> m, n, id = <span class="number">0</span>,</div><div class="line">		new_x, new_y;</div><div class="line">	n = maze.size();</div><div class="line">	m = maze[<span class="number">0</span>].size();</div><div class="line">	<span class="comment">// open table</span></div><div class="line">	<span class="built_in">list</span>&lt;node&gt; open = &#123; node_table[id] &#125;;</div><div class="line">	id++;</div><div class="line">	<span class="comment">// close table</span></div><div class="line">	<span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">bool</span>&gt;&gt; visited(n, <span class="built_in">vector</span>&lt;<span class="keyword">bool</span>&gt;(m, <span class="literal">false</span>));</div><div class="line">	visited[<span class="number">0</span>][<span class="number">0</span>] = <span class="literal">true</span>;</div><div class="line">	<span class="comment">// 四个方向</span></div><div class="line">	<span class="built_in">vector</span>&lt;pair&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt;&gt; dir = &#123; &#123; <span class="number">-1</span>, <span class="number">0</span> &#125;,&#123; <span class="number">0</span>, <span class="number">-1</span> &#125;,&#123; <span class="number">1</span>, <span class="number">0</span> &#125;,&#123; <span class="number">0</span>, <span class="number">1</span> &#125; &#125;;</div><div class="line">	<span class="comment">// 广度优先</span></div><div class="line">	<span class="keyword">while</span> (!open.empty())</div><div class="line">	&#123;</div><div class="line">		node cur = open.front(); <span class="comment">// 每次从open表取出一个节点</span></div><div class="line">		open.pop_front();</div><div class="line">		<span class="comment">// 已经找到</span></div><div class="line">		<span class="keyword">if</span> (cur.x == end_x &amp;&amp; cur.y == end_y) <span class="keyword">return</span> cur.id;</div><div class="line">		<span class="comment">// 四个方向扩展子节点</span></div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">4</span>; ++i)</div><div class="line">		&#123;</div><div class="line">			new_x = cur.x + dir[i].first;</div><div class="line">			new_y = cur.y + dir[i].second;</div><div class="line">			<span class="keyword">if</span> (isvalid(new_x, new_y, n, m) &amp;&amp; maze[new_x][new_y] != <span class="number">1</span> &amp;&amp; !visited[new_x][new_y])</div><div class="line">			&#123;</div><div class="line">				node &amp;tmp = node_table[id];</div><div class="line">				tmp.x = new_x;</div><div class="line">				tmp.y = new_y;</div><div class="line">				tmp.id = id;</div><div class="line">				tmp.patent = cur.id;</div><div class="line">				open.push_back(tmp);</div><div class="line">				visited[new_x][new_y] = <span class="literal">true</span>;</div><div class="line">				id++;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="number">-1</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 递归输出路径</span></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">print_path</span><span class="params">(<span class="built_in">vector</span>&lt;node&gt; &amp;node_table, <span class="keyword">int</span> id)</span></span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">if</span> (node_table[id].patent != <span class="number">-1</span>)</div><div class="line">		print_path(node_table, node_table[id].patent);</div><div class="line">		</div><div class="line">	<span class="built_in">cout</span> &lt;&lt; <span class="string">"("</span> &lt;&lt; node_table[id].x &lt;&lt; <span class="string">","</span> &lt;&lt; node_table[id].y &lt;&lt; <span class="string">")"</span> &lt;&lt; <span class="built_in">endl</span>;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">int</span> n, m, id;</div><div class="line">	<span class="keyword">while</span> (<span class="built_in">cin</span> &gt;&gt; n &gt;&gt; m)</div><div class="line">	&#123;</div><div class="line">		<span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;&gt; maze(n, <span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;(m, <span class="number">0</span>));</div><div class="line">		<span class="comment">// node 表</span></div><div class="line">		<span class="built_in">vector</span>&lt;node&gt; node_table(m * n, &#123; <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">-1</span> &#125;);</div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; n; ++i)</div><div class="line">		&#123;</div><div class="line">			<span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; m; ++j)</div><div class="line">			&#123;</div><div class="line">				<span class="built_in">cin</span> &gt;&gt; maze[i][j];</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		id = BFS(maze, node_table, <span class="number">0</span>, <span class="number">0</span>, n - <span class="number">1</span>, m - <span class="number">1</span>);</div><div class="line">		print_path(node_table, id);</div><div class="line">	&#125;</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure><br>可以看到代表并不是很复杂，BFS算法都在BFS这个函数中，而node这个结构主要是用来记录路径用的，便于找到路径之后通过递归展开输出路径。BFS函数中的思路也比较清晰，不断从open表头出去节点，并把扩展的子节点加入到open表尾部，即先进先出的思想。<br>由于BFS中已经被访问过的节点如果第二次被访问，那么第二次访问时候的路径长度必然大于(或等于)第一次访问时的路径长度，因此就第二次访问的时候就不需要考虑该节点了，所以我们只需要记录被访问过的节点，而不用撤销访问(和DFS有所区别)。</p>
+<h2 id="深度优先搜索"><a href="#深度优先搜索" class="headerlink" title="深度优先搜索"></a>深度优先搜索</h2><p>如果说广度优先搜索适合搜索最优解，那么深度优先搜索就是适合搜索是否存在解。还是先来看问题：<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">请设计一个函数，用来判断在一个矩阵中是否存在一条包含某字符串所有字符的路径。</div><div class="line">路径可以从矩阵中的任意一个格子开始，每一步可以在矩阵中向左，向右，向上，向下移动一个格子。</div><div class="line">如果一条路径经过了矩阵中的某一个格子，则该路径不能再进入该格子。 </div><div class="line">例如：</div><div class="line">abce</div><div class="line">sfcs</div><div class="line">adee </div><div class="line">矩阵中包含一条字符串&quot;bcced&quot;的路径，但是矩阵中不包含&quot;abcb&quot;路径，</div><div class="line">因为字符串的第一个字符b占据了矩阵中的第一行第二个格子之后，路径不能再次进入该格子。</div></pre></td></tr></table></figure></p>
+<p>从题意可以看出，需要找到是否包含该路径，也就是找到是否存在解，所以此处用深度优先搜索比较合适。深度优先搜索展开子节点后把子节点加入到open表的头部，因此适合用递归来实现。</p>
+<p>直接上代码：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;list&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="keyword">class</span> Solution &#123;</div><div class="line"><span class="keyword">public</span>:</div><div class="line">	<span class="function"><span class="keyword">bool</span> <span class="title">hasPath</span><span class="params">(<span class="keyword">char</span>* matrix, <span class="keyword">int</span> rows, <span class="keyword">int</span> cols, <span class="keyword">char</span>* str)</span></span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">this</span>-&gt;matrix = matrix;</div><div class="line">		<span class="keyword">this</span>-&gt;str = str;</div><div class="line">		<span class="keyword">this</span>-&gt;rows = rows;</div><div class="line">		<span class="keyword">this</span>-&gt;cols = cols;</div><div class="line">		<span class="comment">// visited</span></div><div class="line">		<span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">bool</span>&gt;&gt; visited(rows, <span class="built_in">vector</span>&lt;<span class="keyword">bool</span>&gt;(cols, <span class="literal">false</span>));</div><div class="line">		<span class="comment">// 寻找迷宫起点</span></div><div class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; rows * cols; ++i)</div><div class="line">		&#123;</div><div class="line">			<span class="keyword">if</span> (matrix[i] == str[<span class="number">0</span>])</div><div class="line">			&#123;</div><div class="line">				visited[i / cols][i % cols] = <span class="literal">true</span>;</div><div class="line">				<span class="keyword">if</span> (DFS(i / cols, i % cols, <span class="number">0</span>, visited)) <span class="keyword">return</span> <span class="literal">true</span>;</div><div class="line">				visited[i / cols][i % cols] = <span class="literal">false</span>;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">bool</span> <span class="title">isvalid</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y)</span></span></div><div class="line">	&#123;</div><div class="line">		<span class="keyword">if</span> (x &gt;= <span class="number">0</span> &amp;&amp; x &lt; rows &amp;&amp; y &gt;= <span class="number">0</span> &amp;&amp; y &lt; cols)</div><div class="line">			<span class="keyword">return</span> <span class="literal">true</span>;</div><div class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</div><div class="line">	&#125;</div><div class="line"></div><div class="line">	<span class="function"><span class="keyword">bool</span> <span class="title">DFS</span><span class="params">(<span class="keyword">int</span> x, <span class="keyword">int</span> y, <span class="keyword">int</span> str_index, <span class="built_in">vector</span>&lt;<span class="built_in">vector</span>&lt;<span class="keyword">bool</span>&gt;&gt; &amp;visited)</span></span></div><div class="line">	&#123;</div><div class="line">		<span class="comment">// 四个方向</span></div><div class="line">		<span class="keyword">static</span> pair&lt;<span class="keyword">int</span>, <span class="keyword">int</span>&gt; dir[] = &#123; &#123;<span class="number">-1</span>, <span class="number">0</span>&#125;, &#123;<span class="number">0</span>, <span class="number">-1</span>&#125;, &#123;<span class="number">1</span>, <span class="number">0</span>&#125;, &#123;<span class="number">0</span>, <span class="number">1</span>&#125; &#125;;</div><div class="line">		<span class="keyword">int</span> new_x, new_y;</div><div class="line"></div><div class="line">		<span class="keyword">if</span> (str[str_index] == matrix[x * cols + y])</div><div class="line">		&#123;</div><div class="line">			<span class="keyword">if</span> (str[str_index + <span class="number">1</span>] == <span class="string">'\0'</span>) <span class="keyword">return</span> <span class="literal">true</span>;</div><div class="line">			<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">4</span>; ++i)</div><div class="line">			&#123;</div><div class="line">				new_x = x + dir[i].first;</div><div class="line">				new_y = y + dir[i].second;</div><div class="line">				<span class="keyword">if</span> (isvalid(new_x, new_y) &amp;&amp; !visited[new_x][new_y])</div><div class="line">				&#123;</div><div class="line">					visited[new_x][new_y] = <span class="literal">true</span>;</div><div class="line">					<span class="keyword">if</span> (DFS(new_x, new_y, str_index + <span class="number">1</span>, visited))</div><div class="line">						<span class="keyword">return</span> <span class="literal">true</span>;</div><div class="line">					visited[new_x][new_y] = <span class="literal">false</span>;</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">		&#125;</div><div class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</div><div class="line">	&#125;</div><div class="line"><span class="keyword">private</span>:</div><div class="line">	<span class="keyword">int</span> rows;</div><div class="line">	<span class="keyword">int</span> cols;</div><div class="line">	<span class="keyword">char</span> *matrix;</div><div class="line">	<span class="keyword">char</span> *str;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line">&#123;</div><div class="line">	Solution sss;</div><div class="line">	<span class="built_in">cout</span> &lt;&lt; sss.hasPath(<span class="string">"abcesfcsadee"</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="string">"abcd"</span>);</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>可以看到，DFS的代码和BFS的代码十分类似。说一下区别：1. DFS采用递归来实现; 2. 访问表在进入函数之间置位，而在退出函数之后需要复位。原因是因为DFS在访问的时候有一个回溯的过程，如果子节点没有得到需要的解，那么就需要回溯的父节点，并扩展父节点的其他子节点来搜索解，因此原来被子节点访问过的位置现在应该撤销访问。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>BFS和DFS是两种十分重要的搜索算法，BFS适合查找最优解，DFS适合查找是否存在解(或者说能找到任意一个可行解)。</p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://yosef-gao.github.io/2016/08/06/bfs-and-dfs/" data-id="citjkzjrt002i20qfcr4g64m4" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/bfs/">bfs</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/dfs/">dfs</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2016/08/05/string-similarity-and-lcs/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">字符串相似度以及最长公共子序列</span>
+    </a>
+  </li>
+  
+  
+</ul>
+
+
+  
+</article>
+
+
+
+
+        </div>
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          
+  <div class="sidebar-module sidebar-module-inset">
+  <h4>About</h4>
+  <p>Hi, I am yosef gao.</p>
+<p>Graduate student of Zhejiang University of technology.</p>
+<p>Major in Image and Graphics. Mainly use c/c++, familiar with c#.</p>
+<p>I’m now learing server development.</p>
+<p><i class="fa fa-user fa-fw"></i> <em>yosef gao</em><br><i class="fa fa-graduation-cap fa-fw"></i> <em>ZJUT</em><br><i class="fa fa-wechat fa-fw"></i> <em>perfect_means_shit</em><br><i class="fa fa-envelope fa-fw"></i> <a href="&#x6d;&#x61;&#105;&#108;&#116;&#111;&#58;&#x31;&#x30;&#x33;&#x33;&#x31;&#51;&#49;&#x36;&#54;&#x30;&#x40;&#x71;&#x71;&#x2e;&#99;&#111;&#x6d;">&#x31;&#x30;&#x33;&#x33;&#x31;&#51;&#49;&#x36;&#54;&#x30;&#x40;&#x71;&#x71;&#x2e;&#99;&#111;&#x6d;</a></p>
+
+</div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Algorithm/">Algorithm</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/ComputerScience/">ComputerScience</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Image-and-Grapgics/">Image and Grapgics</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Linux/">Linux</a><span class="sidebar-module-list-count">12</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Others/">Others</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Program/">Program</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Tools/">Tools</a><span class="sidebar-module-list-count">1</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/OS/">OS</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/bfs/">bfs</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/c/">c#</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/c-c/">c/c++</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/dfs/">dfs</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/file-system/">file system</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/image-process/">image process</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/json/">json</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/lamp/">lamp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/linux/">linux</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/markdown/">markdown</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/opencv/">opencv</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/particle-filter/">particle filter</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/shell/">shell</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/unix/">unix</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/zjut/">zjut</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/动态规划/">动态规划</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/面试/">面试</a><span class="sidebar-module-list-count">1</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/OS/" style="font-size: 10px;">OS</a> <a href="/tags/bfs/" style="font-size: 10px;">bfs</a> <a href="/tags/c/" style="font-size: 10px;">c#</a> <a href="/tags/c-c/" style="font-size: 17.5px;">c/c++</a> <a href="/tags/dfs/" style="font-size: 10px;">dfs</a> <a href="/tags/file-system/" style="font-size: 12.5px;">file system</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/image-process/" style="font-size: 10px;">image process</a> <a href="/tags/json/" style="font-size: 12.5px;">json</a> <a href="/tags/lamp/" style="font-size: 10px;">lamp</a> <a href="/tags/linux/" style="font-size: 20px;">linux</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/opencv/" style="font-size: 10px;">opencv</a> <a href="/tags/particle-filter/" style="font-size: 10px;">particle filter</a> <a href="/tags/python/" style="font-size: 12.5px;">python</a> <a href="/tags/shell/" style="font-size: 15px;">shell</a> <a href="/tags/unix/" style="font-size: 10px;">unix</a> <a href="/tags/zjut/" style="font-size: 12.5px;">zjut</a> <a href="/tags/动态规划/" style="font-size: 10px;">动态规划</a> <a href="/tags/面试/" style="font-size: 10px;">面试</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/08/">August 2016</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/07/">July 2016</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/06/">June 2016</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/04/">April 2016</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/03/">March 2016</a><span class="sidebar-module-list-count">7</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2016/08/06/bfs-and-dfs/">深度优先搜索与广度优先搜索</a>
+        </li>
+      
+        <li>
+          <a href="/2016/08/05/string-similarity-and-lcs/">字符串相似度以及最长公共子序列</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/29/cloud-music-plugin/">突破网易云音乐播放列表1000限制</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/25/cjson-source-code/">cJSON源码解析(1)</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/25/json/">JSON简介</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Yosef Gao<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+  
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js" integrity="sha384-8gBf6Y4YYq7Jx97PIqmTwLPin4hxIzQw5aDmUg/DDhul9fFpbbLcLh3nTIIDJKhx" crossorigin="anonymous"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>

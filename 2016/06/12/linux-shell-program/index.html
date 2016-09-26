@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Linux shell program(2) | Fantacity</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="这一部分主要总结的是shell如何处理用户的输入，包括命令行参数的处理，用户键盘输入的读取等。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux shell program(2)">
+<meta property="og:url" content="http://yosef-gao.github.io/2016/06/12/linux-shell-program/index.html">
+<meta property="og:site_name" content="Fantacity">
+<meta property="og:description" content="这一部分主要总结的是shell如何处理用户的输入，包括命令行参数的处理，用户键盘输入的读取等。">
+<meta property="og:updated_time" content="2016-09-26T04:22:44.890Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux shell program(2)">
+<meta name="twitter:description" content="这一部分主要总结的是shell如何处理用户的输入，包括命令行参数的处理，用户键盘输入的读取等。">
+  
+    <link rel="alternate" href="/atom.xml" title="Fantacity" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="https://github.com/yosef-gao">Github</a></li>
+        
+          <li><a class=""
+                 href="/about/aboutme.html">About Me</a></li>
+        
+          <li><a class=""
+                 href="/Links/index.html">Links</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+          <li><a href="/atom.xml" title="RSS Feed"><i class="fa fa-rss"></i></a></li>
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">Fantacity</h1>
+  
+    <p class="lead blog-description">Stand Alone Complex</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-8 blog-main">
+          <article id="post-linux-shell-program" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      Linux shell program(2)
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2016/06/12/linux-shell-program/" class="article-date"><time datetime="2016-06-12T06:48:12.000Z" itemprop="datePublished">2016-06-12</time></a>
+</div>
+
+    <div class="article-author">yosef gao</div>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Linux/">Linux</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这一部分主要总结的是shell如何处理用户的输入，包括命令行参数的处理，用户键盘输入的读取等。</p>
+<a id="more"></a>
+<h2 id="命令行参数"><a href="#命令行参数" class="headerlink" title="命令行参数"></a>命令行参数</h2><p>bash shell 会将一些称为位置参数(position parameter)的特殊变量分配给命令行输入的所有参数，这其中也包括程序名。位置参数变量是标准的数字：<strong>$0是程序名</strong>，$1是第一个参数，$2是第二个参数……${10}是第10个参数，依此类推。这里10和之后的参数是需要用<code>{}</code>引起来的。<br>输入命令行参数时，如果参数中间有空格，需要用<code>&quot;&quot;</code>引起来，比如”Rich Blum”。</p>
+<p>在读取程序名时有一个需要注意的地方，先看一个例子：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ cat ./<span class="built_in">test</span>3.sh </div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line"><span class="built_in">echo</span> The <span class="built_in">command</span> entered is: <span class="variable">$0</span></div><div class="line">$ </div><div class="line">$ ./<span class="built_in">test</span>3.sh </div><div class="line">The <span class="built_in">command</span> entered is: ./<span class="built_in">test</span>3.sh</div><div class="line">$</div><div class="line">$ ../script/<span class="built_in">test</span>3.sh </div><div class="line">The <span class="built_in">command</span> entered is: ../script/<span class="built_in">test</span>3.sh</div></pre></td></tr></table></figure><br>当传给$0变量的真实字符串是整个脚本的路径时，程序中就会使用整个路径，而不仅仅是程序名。为了避免这个问题，可以使用basename命令来处理，返回程序名而不包括路径。<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ cat <span class="built_in">test</span>3b.sh </div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line">name=`basename <span class="variable">$0</span>`</div><div class="line"><span class="built_in">echo</span> The <span class="built_in">command</span> entered is: <span class="variable">$name</span></div><div class="line">$ </div><div class="line">$ ./<span class="built_in">test</span>3b.sh </div><div class="line">The <span class="built_in">command</span> entered is: <span class="built_in">test</span>3b.sh</div><div class="line">$</div><div class="line">$ ../script/<span class="built_in">test</span>3b.sh </div><div class="line">The <span class="built_in">command</span> entered is: <span class="built_in">test</span>3b.sh</div></pre></td></tr></table></figure></p>
+<p>参数的数量可以通过参数计数变量<code>$#</code>来读取。我们知道读取数组A内第5个上的元素可以使用${A[5]}。当使用<code>$#</code>变量来读取最后一个命令行参数变量的时候，稍微有点区别，使用方式如下：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ cat <span class="built_in">test</span>4.sh </div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line">params=<span class="variable">$#</span></div><div class="line"><span class="built_in">echo</span> The last parameter is <span class="variable">$&#123;!# &#125;</span></div><div class="line">$</div><div class="line">$ ./<span class="built_in">test</span>4.sh 2 3 4 5 6</div><div class="line">The last parameter is 6</div></pre></td></tr></table></figure></p>
+<p>bash shell还提供了$*和$@变量对所有参数的快速访问。这两个都能够在单个变量重存储所有的命令行参数。其中$*变量会将命令行上提供的所有参数当作单个单词保存，而$@变量会将命令行上所提供的所有参数当作同一个字符串中的多个独立的单词，即$@为一个数组，数组的每一个元素为命令行上的一个参数。</p>
+<h2 id="移动变量"><a href="#移动变量" class="headerlink" title="移动变量"></a>移动变量</h2><p>bash shell 工具链中另一个工具是shift命令。在使用shift命令时，默认情况下它会将每个参数变量减一。所以，变量$3的值会移动$2，变量$2的值会一道$1，而变量$1的值会被删除，但是$0的值，也就是程序名不会改变。<br>这是遍历命令行参数的一个方法，可以只操作第一个参数，移动参数，然后继续操作第一个参数。下面是一个例子：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ cat <span class="built_in">test</span>5.sh </div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line">count=1</div><div class="line"><span class="keyword">while</span> [ -n <span class="string">"<span class="variable">$1</span>"</span> ]; <span class="keyword">do</span></div><div class="line">    <span class="built_in">echo</span> <span class="string">"Parameter #<span class="variable">$count</span> = <span class="variable">$1</span>"</span></div><div class="line">    count=$[ <span class="variable">$count</span> + 1 ]</div><div class="line">    <span class="built_in">shift</span></div><div class="line"><span class="keyword">done</span></div><div class="line">$</div><div class="line">$ ./<span class="built_in">test</span>5.sh rich barbara katie jessica</div><div class="line">Parameter <span class="comment">#1 = rich</span></div><div class="line">Parameter <span class="comment">#2 = barbara</span></div><div class="line">Parameter <span class="comment">#3 = katie</span></div><div class="line">Parameter <span class="comment">#4 = jessica</span></div><div class="line">$</div></pre></td></tr></table></figure></p>
+<h2 id="处理选项"><a href="#处理选项" class="headerlink" title="处理选项"></a>处理选项</h2><p>这里仅摘录一种比较高级的选项处理方式：getopts命令。每次调用getopts命令时，它只处理一个命令行上检测到的参数。处理完所有的参数后，它会退出并返回一个大于零的退出状态码。getopts命令的格式如下：<br>getopts opstring variable<br>getopts命令会用到两个环境变量。如果选项需要跟一个参数值，OPTARG环境变量就会保存这个值。OPTIND环境变量保存了参数列表中getopts正在处理的参数位置。<br>下面是一个简单的使用getopts的例子：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ cat <span class="built_in">test</span>6.sh </div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line"><span class="keyword">while</span> <span class="built_in">getopts</span> :ab:c opt; <span class="keyword">do</span></div><div class="line">    <span class="keyword">case</span> <span class="string">"<span class="variable">$opt</span>"</span> <span class="keyword">in</span></div><div class="line">        a) <span class="built_in">echo</span> <span class="string">"Found the -a option"</span>;;</div><div class="line">        b) <span class="built_in">echo</span> <span class="string">"Found the -b option, with value <span class="variable">$OPTARG</span>"</span>;;</div><div class="line">        c) <span class="built_in">echo</span> <span class="string">"Found the -c option, with index <span class="variable">$OPTIND</span>"</span>;;</div><div class="line">        *) <span class="built_in">echo</span> <span class="string">"Unknow option: <span class="variable">$opt</span>"</span>;;</div><div class="line">    <span class="keyword">esac</span></div><div class="line"><span class="keyword">done</span></div><div class="line">$ </div><div class="line">$ ./<span class="built_in">test</span>6.sh -ab <span class="built_in">test</span>1 -c</div><div class="line">Found the <span class="_">-a</span> option</div><div class="line">Found the -b option, with value <span class="built_in">test</span>1</div><div class="line">Found the -c option, with index 4</div></pre></td></tr></table></figure></p>
+<h2 id="获取用户输入"><a href="#获取用户输入" class="headerlink" title="获取用户输入"></a>获取用户输入</h2><p>read命令接受从标准输入（键盘）或另一个文件描述符的输入。在收到出入后，read命令会将数据放进一个标准变量。<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ cat <span class="built_in">test</span>7.sh </div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line"><span class="built_in">read</span> -p <span class="string">"Please enter your age: "</span> age</div><div class="line">days=$[ <span class="variable">$age</span> * 365 ]</div><div class="line"><span class="built_in">echo</span> <span class="string">"that makes you over <span class="variable">$days</span> days old!"</span></div><div class="line">$ </div><div class="line">$ ./<span class="built_in">test</span>7.sh </div><div class="line">Please enter your age: 24</div><div class="line">that makes you over 8760 days old!</div></pre></td></tr></table></figure><br>其中-p选项允许你直接在read命令行制定提示符。注意，read命令会为提示符输入的所有数据分配一个变量，或者你也可以指定多个变量。输入的每个数据值都会分配给表中的下一个变量。如果变量表在数据之前用完了，剩下的数据就都会分配给最后一个变量。<br>你可以在read命令行中不指定变量。如果那么做了，read命令会将它收到的任何数据都放进特殊环境变量REPLY中。</p>
+<p>read命令可以使用-t选项来指定输入等待的秒数。当计时器过期后，read命令会返回一个非零退出码：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ cat <span class="built_in">test</span>7.sh </div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line"><span class="keyword">if</span> <span class="built_in">read</span> -t 5 -p <span class="string">"Please enter your age: "</span> age; <span class="keyword">then</span></div><div class="line">    days=$[ <span class="variable">$age</span> * 365 ]</div><div class="line">    <span class="built_in">echo</span> <span class="string">"that makes you over <span class="variable">$days</span> days old!"</span></div><div class="line"><span class="keyword">else</span></div><div class="line">    <span class="built_in">echo</span></div><div class="line">    <span class="built_in">echo</span> <span class="string">"Sorry, too slow!"</span></div><div class="line"><span class="keyword">fi</span></div><div class="line"></div><div class="line">$ ./<span class="built_in">test</span>7.sh </div><div class="line">Please enter your age: </div><div class="line">Sorry, too slow!</div></pre></td></tr></table></figure></p>
+<p>有时需要读取用户的输入，但不想输入出现在屏幕上，可以使用-s选项阻止将传给read命令的数据现实在显示器上：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ cat <span class="built_in">test</span>8.sh </div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line"><span class="built_in">read</span> <span class="_">-s</span> -p <span class="string">"Enter your password: "</span> pass</div><div class="line"><span class="built_in">echo</span></div><div class="line"><span class="built_in">echo</span> <span class="string">"Is your password \"<span class="variable">$pass</span>\" ?"</span></div><div class="line">$ </div><div class="line"></div><div class="line">$ ./<span class="built_in">test</span>8.sh </div><div class="line">Enter your password: </div><div class="line">Is your password <span class="string">"123456"</span> ?</div></pre></td></tr></table></figure></p>
+<p>从文件中读取数据，每次调用read命令会从文件中读取一行文本。当文件中再没有内容时，read命令会退出并返回非零状态码。<br>其中最难的部分是将文件中的数据传给read命令，最常见的方法是将文件运行cat命令后的输出通过管道直接传给含有read命令的while命令，以下是一个例子：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ cat <span class="built_in">test</span>9.sh </div><div class="line"><span class="meta">#!/bin/bash</span></div><div class="line"></div><div class="line">count=1</div><div class="line">cat <span class="built_in">test</span> | <span class="keyword">while</span> <span class="built_in">read</span> line; <span class="keyword">do</span></div><div class="line">    <span class="built_in">echo</span> <span class="string">"Line <span class="variable">$count</span>: <span class="variable">$line</span>"</span></div><div class="line">    count=$[ <span class="variable">$count</span> + 1 ]</div><div class="line"><span class="keyword">done</span></div><div class="line"><span class="built_in">echo</span> <span class="string">"Finished processing the file"</span></div><div class="line">$</div><div class="line">$ ./<span class="built_in">test</span>9.sh </div><div class="line">Line 1: The quick brown dog jumps over the lazy fox.</div><div class="line">Line 2: This is a <span class="built_in">test</span>, this is only a test. </div><div class="line">Line 3: O Remeo, Romeo! Wherefore art thou Remeo?</div><div class="line">Finished processing the file</div><div class="line">$ </div></pre></td></tr></table></figure></p>
+<h2 id="数据流重定向-redirect"><a href="#数据流重定向-redirect" class="headerlink" title="数据流重定向(redirect)"></a>数据流重定向(redirect)</h2><p>数据流重定向可以将standard output(stdout)和standard error output(stderr)分别传送到其他的文件或设备去，其中传送所用的特殊字符如下所示：</p>
+<ol>
+<li>标准输入(stdin)：代码为0,使用&lt;或&lt;&lt;；</li>
+<li>标准输出(stdout)：代码为1,使用&gt;或&gt;&gt;;</li>
+<li>标准错误输出(stderr)：代码为2,使用2&gt;或2&gt;&gt;。</li>
+</ol>
+<p>其中&gt;(&lt;)和&gt;&gt;(&lt;&lt;)的区别如下,注意数字和符号之间没有空格：</p>
+<ul>
+<li>1&gt;：以覆盖的方法将正确的数据输出到指定的文件或设备上(不存在则创建)；</li>
+<li>1&gt;&gt;：以累加的方法将正确的数据输出到指定的文件或设备上；</li>
+<li>2&gt;：以覆盖的方法将错误的数据输出到指定的文件或设备上；</li>
+<li>2&gt;&gt;：以累加的方法将错误的数据输出到指定的文件或设备上；</li>
+<li>&lt;：将原本需要由键盘输入的数据改由文件内容来替代；</li>
+<li>&lt;&lt;：内联输入重定向，代表结束输入的意思，具体见下面例子。</li>
+</ul>
+<p>如果需要忽略输出的内容，可以使用如下方法，可以把/dev/null理解为一个黑洞设备：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">find /home -name .bashrc 2&gt; /dev/null</div></pre></td></tr></table></figure></p>
+<p>如果需要把正穷与错误数据都写入同一个文件中，可以使用如下方法<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">find /home -name .bashrc &gt; list 2&gt; list <span class="comment"># 错误的方法，会造成数据交替写入，次序混乱</span></div><div class="line">find /home -name .bashrc &gt; list 2&gt;&amp;1 	<span class="comment"># 正确</span></div><div class="line">find /home -name .bashrc &amp;&gt; list	<span class="comment"># 正确</span></div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://yosef-gao.github.io/2016/06/12/linux-shell-program/" data-id="citjkzjox001520qfmmacc2ul" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/shell/">shell</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2016/06/11/linux-shell-program/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">Linux shell program(1)</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2016/06/13/linux-shell-program/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">Linux shell program(3)</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+
+
+        </div>
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          
+  <div class="sidebar-module sidebar-module-inset">
+  <h4>About</h4>
+  <p>Hi, I am yosef gao.</p>
+<p>Graduate student of Zhejiang University of technology.</p>
+<p>Major in Image and Graphics. Mainly use c/c++, familiar with c#.</p>
+<p>I’m now learing server development.</p>
+<p><i class="fa fa-user fa-fw"></i> <em>yosef gao</em><br><i class="fa fa-graduation-cap fa-fw"></i> <em>ZJUT</em><br><i class="fa fa-wechat fa-fw"></i> <em>perfect_means_shit</em><br><i class="fa fa-envelope fa-fw"></i> <a href="&#x6d;&#x61;&#105;&#108;&#116;&#111;&#58;&#x31;&#x30;&#x33;&#x33;&#x31;&#51;&#49;&#x36;&#54;&#x30;&#x40;&#x71;&#x71;&#x2e;&#99;&#111;&#x6d;">&#x31;&#x30;&#x33;&#x33;&#x31;&#51;&#49;&#x36;&#54;&#x30;&#x40;&#x71;&#x71;&#x2e;&#99;&#111;&#x6d;</a></p>
+
+</div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Algorithm/">Algorithm</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/ComputerScience/">ComputerScience</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Image-and-Grapgics/">Image and Grapgics</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Linux/">Linux</a><span class="sidebar-module-list-count">12</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Others/">Others</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Program/">Program</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Tools/">Tools</a><span class="sidebar-module-list-count">1</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/OS/">OS</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/bfs/">bfs</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/c/">c#</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/c-c/">c/c++</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/dfs/">dfs</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/file-system/">file system</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/image-process/">image process</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/json/">json</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/lamp/">lamp</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/linux/">linux</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/markdown/">markdown</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/opencv/">opencv</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/particle-filter/">particle filter</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/shell/">shell</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/unix/">unix</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/zjut/">zjut</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/动态规划/">动态规划</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/面试/">面试</a><span class="sidebar-module-list-count">1</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/OS/" style="font-size: 10px;">OS</a> <a href="/tags/bfs/" style="font-size: 10px;">bfs</a> <a href="/tags/c/" style="font-size: 10px;">c#</a> <a href="/tags/c-c/" style="font-size: 17.5px;">c/c++</a> <a href="/tags/dfs/" style="font-size: 10px;">dfs</a> <a href="/tags/file-system/" style="font-size: 12.5px;">file system</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/image-process/" style="font-size: 10px;">image process</a> <a href="/tags/json/" style="font-size: 12.5px;">json</a> <a href="/tags/lamp/" style="font-size: 10px;">lamp</a> <a href="/tags/linux/" style="font-size: 20px;">linux</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/opencv/" style="font-size: 10px;">opencv</a> <a href="/tags/particle-filter/" style="font-size: 10px;">particle filter</a> <a href="/tags/python/" style="font-size: 12.5px;">python</a> <a href="/tags/shell/" style="font-size: 15px;">shell</a> <a href="/tags/unix/" style="font-size: 10px;">unix</a> <a href="/tags/zjut/" style="font-size: 12.5px;">zjut</a> <a href="/tags/动态规划/" style="font-size: 10px;">动态规划</a> <a href="/tags/面试/" style="font-size: 10px;">面试</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/08/">August 2016</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/07/">July 2016</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/06/">June 2016</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/04/">April 2016</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/03/">March 2016</a><span class="sidebar-module-list-count">7</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2016/08/06/bfs-and-dfs/">深度优先搜索与广度优先搜索</a>
+        </li>
+      
+        <li>
+          <a href="/2016/08/05/string-similarity-and-lcs/">字符串相似度以及最长公共子序列</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/29/cloud-music-plugin/">突破网易云音乐播放列表1000限制</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/25/cjson-source-code/">cJSON源码解析(1)</a>
+        </li>
+      
+        <li>
+          <a href="/2016/07/25/json/">JSON简介</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Yosef Gao<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+  
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js" integrity="sha384-8gBf6Y4YYq7Jx97PIqmTwLPin4hxIzQw5aDmUg/DDhul9fFpbbLcLh3nTIIDJKhx" crossorigin="anonymous"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>
