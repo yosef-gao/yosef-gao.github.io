@@ -3,23 +3,14 @@
 <head>
   <meta charset="utf-8">
   
-  <title>在VS2015下配置OpenCV3.10环境 | Fantacity</title>
+  <title>Archives: 2016/9 | Fantacity</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="前言OpenCV更新3.x系列的第一个稳定版本3.10了。为了跟上时代的潮流，重新装一个最新的OpenCV版本，顺便记录一下配置过程。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="在VS2015下配置OpenCV3.10环境">
-<meta property="og:url" content="http://yosef-gao.github.io/2016/04/23/install-opencv310-in-vs2015/index.html">
+  <meta property="og:type" content="website">
+<meta property="og:title" content="Fantacity">
+<meta property="og:url" content="http://yosef-gao.github.io/archives/2016/09/index.html">
 <meta property="og:site_name" content="Fantacity">
-<meta property="og:description" content="前言OpenCV更新3.x系列的第一个稳定版本3.10了。为了跟上时代的潮流，重新装一个最新的OpenCV版本，顺便记录一下配置过程。">
-<meta property="og:image" content="http://yosef-gao.github.io/2016/04/23/install-opencv310-in-vs2015/step1.png">
-<meta property="og:image" content="http://yosef-gao.github.io/2016/04/23/install-opencv310-in-vs2015/step2.png">
-<meta property="og:image" content="http://yosef-gao.github.io/2016/04/23/install-opencv310-in-vs2015/step3.png">
-<meta property="og:image" content="http://yosef-gao.github.io/2016/04/23/install-opencv310-in-vs2015/step4.png">
-<meta property="og:updated_time" content="2016-09-26T04:22:44.855Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="在VS2015下配置OpenCV3.10环境">
-<meta name="twitter:description" content="前言OpenCV更新3.x系列的第一个稳定版本3.10了。为了跟上时代的潮流，重新装一个最新的OpenCV版本，顺便记录一下配置过程。">
-<meta name="twitter:image" content="http://yosef-gao.github.io/2016/04/23/install-opencv310-in-vs2015/step1.png">
+<meta name="twitter:title" content="Fantacity">
   
     <link rel="alternate" href="/atom.xml" title="Fantacity" type="application/atom+xml">
   
@@ -60,7 +51,7 @@
           <li><a class=""
                  href="/index.html">Home</a></li>
         
-          <li><a class=""
+          <li><a class="active"
                  href="/archives/">Archives</a></li>
         
           <li><a class=""
@@ -95,92 +86,40 @@
 
     <div class="row">
         <div class="col-sm-8 blog-main">
-          <article id="post-install-opencv310-in-vs2015" class="article article-type-post" itemscope itemprop="blogPost">
-
-  <header class="article-header">
+          
+  
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2016" class="archive-year">2016</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-new">
+  <header class="archive-article-header">
     
   
-    <h1 class="article-title" itemprop="name">
-      在VS2015下配置OpenCV3.10环境
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2016/09/27/cpp-vptr-and-vtable/">C++虚函数的实现探究——vptr和vtable</a>
     </h1>
   
 
 
-  </header>
-
-  <div class="article-meta">
     <div class="article-datetime">
-  <a href="/2016/04/23/install-opencv310-in-vs2015/" class="article-date"><time datetime="2016-04-23T06:23:35.000Z" itemprop="datePublished">2016-04-23</time></a>
+  <a href="/2016/09/27/cpp-vptr-and-vtable/" class="archive-article-date"><time datetime="2016-09-27T06:13:30.000Z" itemprop="datePublished">September 27th</time></a>
 </div>
 
-    <div class="article-author">yosef gao</div>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Tools/">Tools</a>
-  </div>
-
-
-  </div>
-  <div class="article-inner">
-
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>OpenCV更新3.x系列的第一个稳定版本3.10了。为了跟上时代的潮流，重新装一个最新的OpenCV版本，顺便记录一下配置过程。</p>
-<a id="more"></a>
-<h2 id="安装OpenCV3-10"><a href="#安装OpenCV3-10" class="headerlink" title="安装OpenCV3.10"></a>安装OpenCV3.10</h2><p>这一步其实没什么好说的，从OpenCV<a href="http://opencv.org/documentation.html" target="_blank" rel="external">官网</a>下载最新的OpenCV for windows版本，然后解压就行了，这里假设解压的根目录为X:\OpenCV。</p>
-<h2 id="配置环境变量"><a href="#配置环境变量" class="headerlink" title="配置环境变量"></a>配置环境变量</h2><p>添加环境变量就用以下3张图来说明应该就足够了。注意，这里在环境变量<code>Path</code>中添加的就是上文中提到的<code>X:\\OpenCV\\opencv\\build\\x64\\vc14\\bin</code>。其中x64和x86取决于你的系统环境，vc14对应vs2015，vc13对应vs2013，vc12对应vs2011，vc11对应vs2010，本文使用vs2015。</p>
-<img src="/2016/04/23/install-opencv310-in-vs2015/step1.png" alt="第1步，选择环境变量" title="第1步，选择环境变量">
-<img src="/2016/04/23/install-opencv310-in-vs2015/step2.png" alt="第2步，编辑系统变量Path" title="第2步，编辑系统变量Path">
-<img src="/2016/04/23/install-opencv310-in-vs2015/step3.png" alt="第3步，添加OpenCV bin目录" title="第3步，添加OpenCV bin目录">
-<h2 id="配置属性表"><a href="#配置属性表" class="headerlink" title="配置属性表"></a>配置属性表</h2><p>有人喜欢先建一个vc++的模板工程，然后配置好opencv环境，下次直接使用这个模板就行了，不过我更喜欢配置属性表。<br>首先新建一个vc++的控制台空项目。<br><img src="/2016/04/23/install-opencv310-in-vs2015/step4.png" alt="新建vc++控制台空项目" title="新建vc++控制台空项目"><br>然后添加一个新的属性表，名字就叫OpenCV310好了，以后都用得着。<br>然后直接编辑这个属性表，内容如下，需要注意的是其中的OpenCV目录改为自己对应的目录即可：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;</div><div class="line">&lt;Project ToolsVersion=&quot;4.0&quot; xmlns=&quot;http://schemas.microsoft.com/developer/msbuild/2003&quot;&gt;</div><div class="line">  &lt;ImportGroup Label=&quot;PropertySheets&quot; /&gt;</div><div class="line">  &lt;PropertyGroup Label=&quot;UserMacros&quot; /&gt;</div><div class="line">  &lt;PropertyGroup&gt;</div><div class="line">    &lt;IncludePath&gt;D:\opencv310\opencv\build\include;$(IncludePath)&lt;/IncludePath&gt;</div><div class="line">    &lt;ExecutablePath Condition=&quot;&apos;$(Platform)&apos;==&apos;Win32&apos;&quot;&gt;D:\opencv310\opencv\build\x86\vc14\bin;$(ExecutablePath)&lt;/ExecutablePath&gt;</div><div class="line">    &lt;ExecutablePath Condition=&quot;&apos;$(Platform)&apos;==&apos;X64&apos;&quot;&gt;D:\opencv310\opencv\build\x64\vc14\bin;$(ExecutablePath)&lt;/ExecutablePath&gt;</div><div class="line">    &lt;LibraryPath Condition=&quot;&apos;$(Platform)&apos;==&apos;Win32&apos;&quot;&gt;D:\opencv310\opencv\build\x86\vc14\lib;$(LibraryPath)&lt;/LibraryPath&gt;</div><div class="line">    &lt;LibraryPath Condition=&quot;&apos;$(Platform)&apos;==&apos;X64&apos;&quot;&gt;D:\opencv310\opencv\build\x64\vc14\lib;$(LibraryPath)&lt;/LibraryPath&gt;</div><div class="line">  &lt;/PropertyGroup&gt;</div><div class="line">  &lt;ItemDefinitionGroup&gt;</div><div class="line">    &lt;Link Condition=&quot;&apos;$(Configuration)&apos;==&apos;Debug&apos;&quot;&gt;</div><div class="line">      &lt;AdditionalDependencies&gt;opencv_world310d.lib;%(AdditionalDependencies)&lt;/AdditionalDependencies&gt;</div><div class="line">    &lt;/Link&gt;</div><div class="line">    &lt;Link Condition=&quot;&apos;$(Configuration)&apos;==&apos;Release&apos;&quot;&gt;</div><div class="line">      &lt;AdditionalDependencies&gt;opencv_world310.lib;%(AdditionalDependencies)&lt;/AdditionalDependencies&gt;</div><div class="line">    &lt;/Link&gt;</div><div class="line">  &lt;/ItemDefinitionGroup&gt;</div><div class="line">  &lt;ItemGroup /&gt;</div><div class="line">&lt;/Project&gt;</div></pre></td></tr></table></figure>
-<p>OK，然后新建一个cpp文件测一下是否大功告成把。</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;opencv2/core.hpp&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;opencv2/imgcodecs.hpp&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;opencv2/highgui.hpp&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> cv;</div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>** argv)</span></span></div><div class="line">&#123;</div><div class="line">    Mat image;</div><div class="line">    image = imread(<span class="string">"You test picture path here!"</span>, IMREAD_COLOR); <span class="comment">// Read the file</span></div><div class="line">    <span class="keyword">if</span> (image.empty()) <span class="comment">// Check for invalid input</span></div><div class="line">    &#123;</div><div class="line">        <span class="built_in">cout</span> &lt;&lt; <span class="string">"Could not open or find the image"</span> &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</div><div class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</div><div class="line">    &#125;</div><div class="line">    namedWindow(<span class="string">"Display window"</span>, WINDOW_AUTOSIZE); <span class="comment">// Create a window for display.</span></div><div class="line">    imshow(<span class="string">"Display window"</span>, image); <span class="comment">// Show our image inside it.</span></div><div class="line">    waitKey(<span class="number">0</span>); <span class="comment">// Wait for a keystroke in the window</span></div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>然后把opencv310.props备份一份放在自己喜欢的地方，下次新建工程的时候直接把该属性表添加进来就可以了。<br>Have fun with OpenCV!</p>
-
-      
-    </div>
-
-    
-      
-
-    
-
-    <footer class="article-footer">
-      <a data-url="http://yosef-gao.github.io/2016/04/23/install-opencv310-in-vs2015/" data-id="citl37h1m000r7gqfsrng3e40" class="article-share-link">
-        <i class="fa fa-share"></i> Share
-      </a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/opencv/">opencv</a></li></ul>
-
-
-    </footer>
-  </div>
-  
-    
-<ul id="article-nav" class="nav nav-pills nav-justified">
-  
-  <li role="presentation">
-    <a href="/2016/04/17/guang-c424-photos/" id="article-nav-older" class="article-nav-link-wrap">
-      <i class="fa fa-chevron-left pull-left"></i>
-      <span class="article-nav-link-title">春夏之交</span>
-    </a>
-  </li>
-  
-  
-  <li role="presentation">
-    <a href="/2016/06/06/linux-file-system/" id="article-nav-newer" class="article-nav-link-wrap">
-      <span class="article-nav-link-title">Linux 文件系统</span>
-      <i class="fa fa-chevron-right pull-right"></i>
-    </a>
-  </li>
-  
-</ul>
-
-
-  
+  </header>
 </article>
+
+  
+  
+    </div></section>
+  
 
 
 
