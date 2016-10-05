@@ -3,18 +3,18 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Mutex Lock Guard | Fantacity</title>
+  <title>STL中的Traits编程技巧 | Fantacity</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="陈硕老师《Linux 多线程服务端编程 使用muduo C++网络库》一书中对于MutexLock、MutexLockGuard的封装，主要用到了C++中的RAII技术。">
+  <meta name="description" content="《STL源码剖析》一书中提到Traits编程技法，它的作用是获取型别(associated type)的特性。这样讲比较抽象，到底什么是相应型别，或者到底什么时候需要用到Traits编程技法呢？先来看一个例子。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Mutex Lock Guard">
-<meta property="og:url" content="http://yosef-gao.github.io/2016/06/16/mutex-lock-guard/index.html">
+<meta property="og:title" content="STL中的Traits编程技巧">
+<meta property="og:url" content="http://yosef-gao.github.io/2016/10/05/cpp-traits/index.html">
 <meta property="og:site_name" content="Fantacity">
-<meta property="og:description" content="陈硕老师《Linux 多线程服务端编程 使用muduo C++网络库》一书中对于MutexLock、MutexLockGuard的封装，主要用到了C++中的RAII技术。">
-<meta property="og:updated_time" content="2016-09-26T04:22:44.931Z">
+<meta property="og:description" content="《STL源码剖析》一书中提到Traits编程技法，它的作用是获取型别(associated type)的特性。这样讲比较抽象，到底什么是相应型别，或者到底什么时候需要用到Traits编程技法呢？先来看一个例子。">
+<meta property="og:updated_time" content="2016-10-05T11:17:19.410Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Mutex Lock Guard">
-<meta name="twitter:description" content="陈硕老师《Linux 多线程服务端编程 使用muduo C++网络库》一书中对于MutexLock、MutexLockGuard的封装，主要用到了C++中的RAII技术。">
+<meta name="twitter:title" content="STL中的Traits编程技巧">
+<meta name="twitter:description" content="《STL源码剖析》一书中提到Traits编程技法，它的作用是获取型别(associated type)的特性。这样讲比较抽象，到底什么是相应型别，或者到底什么时候需要用到Traits编程技法呢？先来看一个例子。">
   
     <link rel="alternate" href="/atom.xml" title="Fantacity" type="application/atom+xml">
   
@@ -90,13 +90,13 @@
 
     <div class="row">
         <div class="col-sm-8 blog-main">
-          <article id="post-mutex-lock-guard" class="article article-type-post" itemscope itemprop="blogPost">
+          <article id="post-cpp-traits" class="article article-type-post" itemscope itemprop="blogPost">
 
   <header class="article-header">
     
   
     <h1 class="article-title" itemprop="name">
-      Mutex Lock Guard
+      STL中的Traits编程技巧
     </h1>
   
 
@@ -105,7 +105,7 @@
 
   <div class="article-meta">
     <div class="article-datetime">
-  <a href="/2016/06/16/mutex-lock-guard/" class="article-date"><time datetime="2016-06-16T05:37:13.000Z" itemprop="datePublished">2016-06-16</time></a>
+  <a href="/2016/10/05/cpp-traits/" class="article-date"><time datetime="2016-10-05T11:17:19.000Z" itemprop="datePublished">2016-10-05</time></a>
 </div>
 
     <div class="article-author">yosef gao</div>
@@ -120,12 +120,23 @@
 
     <div class="article-entry" itemprop="articleBody">
       
-        <p>陈硕老师《Linux 多线程服务端编程 使用muduo C++网络库》一书中对于MutexLock、MutexLockGuard的封装，主要用到了C++中的<a href="/2016/06/14/cpp-raii/">RAII技术</a>。</p>
-<a id="more"></a>
-<figure class="highlight cpp"><figcaption><span>MutexLock.cpp</span></figcaption><table><tr><td class="code"><pre><div class="line"><span class="keyword">class</span> MutexLock : boost::nocopyable</div><div class="line">&#123;</div><div class="line">    <span class="keyword">public</span>:</div><div class="line">        MutexLock()</div><div class="line">            : holder_(<span class="number">0</span>)</div><div class="line">        &#123;</div><div class="line">            pthread_mutex_init(&amp;mutex_, <span class="literal">NULL</span>);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        ~MutexLock()</div><div class="line">        &#123;</div><div class="line">            assert(holder_ == <span class="number">0</span>);</div><div class="line">            pthread_mutex_destory(&amp;mutex_);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">bool</span> <span class="title">isLockByThisThread</span><span class="params">()</span></span></div><div class="line">        &#123;</div><div class="line">            <span class="keyword">return</span> holder_ == CurrentThread::tid();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">void</span> <span class="title">assertLocked</span><span class="params">()</span></span></div><div class="line">        &#123;</div><div class="line">            assert(isLockByThisThread());</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span> <span class="comment">// 仅供MutexLockGuard()调用，严禁用户代码调用</span></span></div><div class="line">        &#123;</div><div class="line">            pthread_mutex_lock(&amp;mutex_);</div><div class="line">            holder_ = CurrentThread::tid(); <span class="comment">// 这两行顺序不能反</span></div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span></span></div><div class="line">        &#123;</div><div class="line">            holder_ = <span class="number">0</span>;</div><div class="line">            pthread_mutex_unlock(&amp;mutex_); <span class="comment">// 这两行顺序不能反</span></div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="keyword">pthread_mutex_t</span>* getPthreadMutex() <span class="comment">// 仅供Codition调用，严禁用户代码调用</span></div><div class="line">        &#123;</div><div class="line">            <span class="keyword">return</span> &amp;mutex_;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    <span class="keyword">private</span>:</div><div class="line">        <span class="keyword">pthread_mutex_t</span> mutex_;</div><div class="line">        <span class="keyword">pid_t</span> holder_;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-<figure class="highlight"><figcaption><span>MutexLockGuard.cpp</span></figcaption><table><tr><td class="code"><pre><div class="line">class MutexLockGuard : boost::nocopyable</div><div class="line">&#123;</div><div class="line">    public:</div><div class="line">        explicit MutexLockGuard(MutexLock&amp; mutex)</div><div class="line">            :mutex_(mutex)</div><div class="line">        &#123;</div><div class="line">            mutex_.lock();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        ~MutexLockGuard()</div><div class="line">        &#123;</div><div class="line">            mutex_.unlock();</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    private:</div><div class="line">        MutexLock&amp; mutex_;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">#define MutexLockGuard(x) static_assert(false, "missing mutex guard var name")</div></pre></td></tr></table></figure>
-<p>注意上面代码的最后一行定义了一个宏，这个宏的作用是防止程序里出现如下错误：<br><figure class="highlight cpp"><figcaption><span>test.cpp</span></figcaption><table><tr><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">doit</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    MutexLockGuard(mutex); <span class="comment">// 遗漏变量名，产生一个临时的对象又马上销毁了</span></div><div class="line"></div><div class="line">    <span class="comment">// 正确写法是 MutexLockGuard lock(mutex);</span></div><div class="line">    <span class="comment">//</span></div><div class="line">    <span class="comment">// 临界区</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<figure class="highlight"><figcaption><span>Condition.cpp</span></figcaption><table><tr><td class="code"><pre><div class="line">class Condition : boost::noncopyable</div><div class="line">&#123;</div><div class="line">    public:</div><div class="line">        explicit Condition(MutexLock&amp; mutex)</div><div class="line">            : mutex_(mutex)</div><div class="line">        &#123;</div><div class="line">            pthread_cond_init(&amp;pcond_, NULL);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        ~Condition()</div><div class="line">        &#123;</div><div class="line">            pthread_cond_destory(&amp;pcond_);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        void wait() </div><div class="line">        &#123;</div><div class="line">            pthread_cond_wait(&amp;pcond_, mutex_.getPthreadMutex());</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        void notify()</div><div class="line">        &#123;</div><div class="line">            pthread_cond_signal(&amp;pcond_);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        void notifyAll()</div><div class="line">        &#123;</div><div class="line">            pthread_cond_broadcast(&amp;pcond_);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">    private:</div><div class="line">        MutexLock&amp; mutex_;</div><div class="line">        pthread_cond_t pcond;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+        <p>《STL源码剖析》一书中提到Traits编程技法，它的作用是获取型别(associated type)的特性。这样讲比较抽象，到底什么是相应型别，或者到底什么时候需要用到Traits编程技法呢？先来看一个例子。<br><a id="more"></a></p>
+<h2 id="iterator-traits"><a href="#iterator-traits" class="headerlink" title="iterator_traits"></a>iterator_traits</h2><p>假设有这么一个函数，接受一个iterator，返回这个iterator所指代的类型，其实这个函数就是实现了typeof()，但是c++里面并没有typeof()操作符。<br><figure class="highlight cpp"><table><tr><td class="code"><pre><div class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; iv = &#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>&#125;;</div><div class="line"><span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt;::Iterator it1 = iv.begin(), it2 = iv.end();</div><div class="line"></div><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> iterator&gt;</div><div class="line"><span class="comment">// ret-type</span></div><div class="line">fun(iterator it)</div><div class="line">&#123;</div><div class="line">	<span class="comment">// 函数体</span></div><div class="line">&#125;</div></pre></td></tr></table></figure><br>那么函数的返回类型的该怎么写呢？再往下看，如果这个Iterator由我们自己来实现（事实上stl的Iterator的实现和这个十分类似）<br><figure class="highlight cpp"><table><tr><td class="code"><pre><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> T&gt;</div><div class="line"><span class="keyword">struct</span> MyIter <span class="comment">// 为了方便访问成员，用struct</span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">typedef</span> T value_type;	<span class="comment">// 内嵌声明(nested type)</span></div><div class="line">    T* ptr;</div><div class="line">    MyIter (T* p = <span class="number">0</span>):ptr(p)&#123;&#125;</div><div class="line">	T&amp; <span class="keyword">operator</span>*() <span class="keyword">const</span> &#123; <span class="keyword">return</span> *ptr; &#125;</div><div class="line">    <span class="comment">//...  </span></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> I&gt;</div><div class="line"><span class="keyword">typename</span> I::value_type	<span class="comment">// 函数返回类型</span></div><div class="line">func(I ite)</div><div class="line">&#123;</div><div class="line">    <span class="keyword">return</span> *ite;</div><div class="line">&#125;</div></pre></td></tr></table></figure><br>这里要注意一点，返回类型必须加上关键词<code>typename</code>，编译器并不知道<code>MyIter&lt;I&gt;::value_type</code>代表的是一个型别或是一个<code>member function</code>或是一个<code>data member</code>。关键词<code>typename</code>的用意在于告诉编译器这是一个型别，如此才能顺利通过。这样我们就可以通过func函数获取迭代器所指代的类型了。</p>
+<p>但是这样还是有一个问题，并不是所有迭代器都是class type的。比如原生的指针就不是，这样就没有办法为它定义内嵌型别了。现在就轮到traits编程技法发挥作用的时候了：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><div class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> I&gt;</div><div class="line"><span class="keyword">struct</span> iterator_traits </div><div class="line">&#123;</div><div class="line">    <span class="keyword">typedef</span> <span class="keyword">typename</span> I::value_type value_type; <span class="comment">// 此处的typename和上文同理，不再赘述。</span></div><div class="line">&#125;</div><div class="line"><span class="comment">// func可以这么写</span></div><div class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> I&gt;</div><div class="line"><span class="keyword">typename</span> iterator_traits&lt;I&gt;::<span class="function">value_type</span></div><div class="line"><span class="title">func</span><span class="params">(I ite)</span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">return</span> *ite;</div><div class="line">&#125;</div></pre></td></tr></table></figure><br>现在我们可以利用模板的template partial specialization(偏特化)定义一个偏特化版的iterator_traits专门用于萃取原生指针的型别。<br><figure class="highlight cpp"><table><tr><td class="code"><pre><div class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div><div class="line"><span class="keyword">struct</span> iterator_traits&lt;T*&gt;</div><div class="line">&#123;</div><div class="line">    <span class="keyword">typedef</span> T value_type;</div><div class="line">&#125;</div></pre></td></tr></table></figure><br>同理，对于指向常量的指针，我们也可以专门偏特化一个版本来萃取它的型别。<br><figure class="highlight cpp"><table><tr><td class="code"><pre><div class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> T&gt;</div><div class="line"><span class="keyword">struct</span> iterator_traits&lt;<span class="keyword">const</span> T*&gt;</div><div class="line">&#123;</div><div class="line">    <span class="keyword">typedef</span> T value_type;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="type-traits"><a href="#type-traits" class="headerlink" title="__type_traits"></a>__type_traits</h2><p>这里再提一点题外话，《STL源码剖析》提到，stl只对迭代器加以规范，制定出iterator_traits这样的东西，SGI则把这种技法扩大到了迭代器以外，定义了__type_traits。双底线前缀值这是SGI STL内部特有的，不在STL的标准规划之中。</p>
+<p>如果说iterator_traits负责萃取迭代器的特性，那么__type_traits则负责萃取型别的特性。这里所关注的型别特性有一下5个：</p>
+<ol>
+<li>has_trivial_default_constructor</li>
+<li>has_trivial_copy_constructor</li>
+<li>has_trivial_assignment_operator</li>
+<li>has_trivial_destructor</li>
+<li>is_POD_type</li>
+</ol>
+<p>有了这些型别特性，我们在对这个型别进行构造、析构、拷贝、赋值等操作时，就可宜采用最有效率的措施。比如对于has_trivial_copy_constructor，那么我只直接通过内存拷贝来实现对象拷贝以提高效率。</p>
+<p>参照iterator_traits的经验，我们希望通过下面这样的方法来获取使用__type_traits<t>：<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">__type_traits&lt;T&gt;::has_trivial_default_constructor</div><div class="line">__type_traits&lt;T&gt;::has_trivial_copy_constructor</div><div class="line">__type_traits&lt;T&gt;::has_trivial_assignment_operator</div><div class="line">__type_traits&lt;T&gt;::has_trivial_destructor</div><div class="line">__type_traits&lt;T&gt;::is_POD_type</div></pre></td></tr></table></figure></t></p>
+<p>我们希望上式能够返回给我们一个对象的型别，而不是单纯的bool类型，这样编译器可以通过这个对象的型别来进行参数推导。为此，上述式子应该传回<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">struct __true_type &#123;&#125;;</div><div class="line">struct __false_type &#123;&#125;;</div></pre></td></tr></table></figure></p>
+<p>这是两个空白classes，没有任何成员，我们知道编译器在进行参数推导的时候，并不会真的去生成一个对象，因此，这么做是不会带来额外负担的，却又能够标示真假。</p>
+<p>下面就是SGI的<code>__type_traits</code>实现：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><div class="line"><span class="keyword">template</span> &lt;<span class="keyword">class</span> type&gt;</div><div class="line"><span class="keyword">struct</span> __type_traits</div><div class="line">&#123;</div><div class="line">    <span class="keyword">typedef</span> __true_type 	this_dummy_member_must_be_first;</div><div class="line">	</div><div class="line">	<span class="keyword">typedef</span> __false_type	has_trivial_default_constructor;</div><div class="line">	<span class="keyword">typedef</span> __false_type	has_trivial_copy_constructor;</div><div class="line">	<span class="keyword">typedef</span> __false_type	has_trivial_assignment_operator;</div><div class="line">	<span class="keyword">typedef</span> __false_type	has_trivial_destructor;</div><div class="line">	<span class="keyword">typedef</span> __false_type	is_POD_type;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// 下面是&lt;yupe_traits.h&gt;对C++标量型定义的__type_traits的特化版的一个举例。</span></div><div class="line"><span class="comment">// __STL_TEMPLATE_NULL 定义为 template&lt;&gt;</span></div><div class="line">__STL_TEMPLATE_NULL <span class="keyword">struct</span> __type_traits&lt;<span class="keyword">char</span>&gt;</div><div class="line">&#123;</div><div class="line">	<span class="keyword">typedef</span> __true_type	has_trivial_default_constructor;</div><div class="line">	<span class="keyword">typedef</span> __true_type	has_trivial_copy_constructor;</div><div class="line">	<span class="keyword">typedef</span> __true_type	has_trivial_assignment_operator;</div><div class="line">	<span class="keyword">typedef</span> __true_type	has_trivial_destructor;</div><div class="line">	<span class="keyword">typedef</span> __true_type	is_POD_type;</div><div class="line">&#125;</div></pre></td></tr></table></figure><br>如果自己实现一个类，需要告诉STL这个类的特性，那么为这个类也特化一个模板就可以了。</p>
 
       
     </div>
@@ -136,12 +147,12 @@
     
 
     <footer class="article-footer">
-      <a data-url="http://yosef-gao.github.io/2016/06/16/mutex-lock-guard/" data-id="citwttf4o001tk4qft6cuq13v" class="article-share-link">
+      <a data-url="http://yosef-gao.github.io/2016/10/05/cpp-traits/" data-id="citwttey80008k4qf6ivtqswo" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c-c/">c/c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/stl/">stl</a></li></ul>
 
 
     </footer>
@@ -151,19 +162,12 @@
 <ul id="article-nav" class="nav nav-pills nav-justified">
   
   <li role="presentation">
-    <a href="/2016/06/14/cpp-raii/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2016/10/01/cpp-new/" id="article-nav-older" class="article-nav-link-wrap">
       <i class="fa fa-chevron-left pull-left"></i>
-      <span class="article-nav-link-title">C++中RAII技巧(转载)</span>
+      <span class="article-nav-link-title">C++当中3种new的用法</span>
     </a>
   </li>
   
-  
-  <li role="presentation">
-    <a href="/2016/06/23/linux-disk/" id="article-nav-newer" class="article-nav-link-wrap">
-      <span class="article-nav-link-title">从磁盘分区开始谈起</span>
-      <i class="fa fa-chevron-right pull-right"></i>
-    </a>
-  </li>
   
 </ul>
 
