@@ -12,7 +12,7 @@
 <meta property="og:site_name" content="Fantacity">
 <meta property="og:description" content="最近在看侯捷侯老师的著作《STL源码剖析》，书中第二张开始讲到了stl中的allocator的一个简易实现，发现原来cpp中的new其实除了我们平常用的最多的new表达式(new operator)之外，还有剩下两种用法。">
 <meta property="og:image" content="http://yosef-gao.github.io/2016/10/01/cpp-new/1.png">
-<meta property="og:updated_time" content="2016-10-01T03:19:31.620Z">
+<meta property="og:updated_time" content="2016-10-05T03:02:46.493Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="C++当中3种new的用法">
 <meta name="twitter:description" content="最近在看侯捷侯老师的著作《STL源码剖析》，书中第二张开始讲到了stl中的allocator的一个简易实现，发现原来cpp中的new其实除了我们平常用的最多的new表达式(new operator)之外，还有剩下两种用法。">
@@ -123,13 +123,19 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>最近在看侯捷侯老师的著作《STL源码剖析》，书中第二张开始讲到了stl中的allocator的一个简易实现，发现原来cpp中的new其实除了我们平常用的最多的new表达式(new operator)之外，还有剩下两种用法。<br><a id="more"></a></p>
-<h2 id="1-new-operator"><a href="#1-new-operator" class="headerlink" title="1. new operator"></a>1. new operator</h2><p>new operator，也叫new表达式，是我们在cpp中最常见的new的用法，比如：<br>string *pStr = new string(“abd”);<br>这个new表达式完成了两件事情：申请内存和调用类的构造函数初始化对象。</p>
-<h2 id="2-operator-new"><a href="#2-operator-new" class="headerlink" title="2. operator new"></a>2. operator new</h2><p>operator new，也叫new操作符，容易和new operator搞混。new 操作符类似与c当中的malloc库函数，只负责申请内存，例如：<br>void *buffer = ::operator new(sizeof(string));</p>
-<h2 id="3-placement-new"><a href="#3-placement-new" class="headerlink" title="3. placement new"></a>3. placement new</h2><p>placement new，它用于在给定的内存中初始化对象，例如<br>void *buffer = ::operator new(sizeof(string));<br>buffer = new(buffer) string(“abd”);</p>
+<h2 id="1-new-operator-delete-operator"><a href="#1-new-operator-delete-operator" class="headerlink" title="1. new operator/delete operator"></a>1. new operator/delete operator</h2><p>new operator，也叫new表达式，是我们在cpp中最常见的new的用法，比如：<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">string *pStr = new string(&quot;abd&quot;);</div></pre></td></tr></table></figure></p>
+<p>这个new表达式完成了两件事情：申请内存和调用类的构造函数初始化对象。</p>
+<p>与之相对应的是delete operator（delete 表达式），它完成了两件事情：调用所指向元素的析构函数，然后释放内存空间。</p>
+<h2 id="2-operator-new-operator-new-operator-delete-operator-delete"><a href="#2-operator-new-operator-new-operator-delete-operator-delete" class="headerlink" title="2. operator new(operator new[])/operator delete(operator delete[])"></a>2. operator new(operator new[])/operator delete(operator delete[])</h2><p>operator new(或者operator new[])，其实是标准库函数，容易和new operator搞混。类似与c当中的malloc库函数，只负责申请一块原始的未命名的内存空间，例如：<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">void *buffer = ::operator new(sizeof(string));</div></pre></td></tr></table></figure></p>
+<p>operator delete(或者 operator delete[])，是标准库函数，类似于c当中free库函数，负责释放内存空间。</p>
+<p>标准库点故意了operator new函数和operator delete函数的8个重载版本(c++ primer 中文版第5版，P727)，其中前4个版本可能抛出bad_alloc异常，后4个版本则不会抛出异常：<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">// 这4个版本可能抛出异常</div><div class="line">void *operator new(size_t);			// 分配一个对象</div><div class="line">void *operator new[](size_t);			// 分配一个数组</div><div class="line">void *operator delete(void*) noexcept;		// 释放一个对象</div><div class="line">void *operator delete[](void*) noexcept;	// 释放一个数组</div><div class="line"></div><div class="line">// 这些版本承若不会抛出异常</div><div class="line">void *operator new(size_t, nothorw_t &amp;);		// 分配一个对象</div><div class="line">void *operator new[](size_t, nothorw_t &amp;);		// 分配一个数组</div><div class="line">void *operator delete(void*, nothorw_t &amp;) noexcept;	// 释放一个对象</div><div class="line">void *operator delete[](void*, nothorw_t &amp;) noexcept;	// 释放一个数组</div></pre></td></tr></table></figure></p>
+<p>其中类型nothrow_t是定义在new头文件中的一个struct，在这个类型中不包含任何成员。noexcept异常说明符用来指定其不抛出异常。<br>当我们自己定义了全局的operator new函数和operator delete函数后，编译器会优先使用我们自己定义的operator new和operator delete，这样我们就担负起了控制动态内存分配的职责，因此这两个函数必须是正确的。我们也可以定义它们为成员函数，如果同时定义了全局和类的成员函数，优先使用成员函数版本的，如果需要使用全局版本的，可以用作用于运算符<code>::operator new</code>和<code>::operator delete</code>。</p>
+<h2 id="3-placement-new"><a href="#3-placement-new" class="headerlink" title="3. placement new"></a>3. placement new</h2><p>placement new，也叫定位new表达式，它用于在给定的内存中初始化对象（但不分配内存），例如<br>void *buffer = ::operator new(sizeof(string));<br>buffer = new(buffer) string(“abd”);</p>
+<p>与placement new类似，我们可以通过对象调用析构函数，也可以通过对象的指针或引用调用析构函数，这与调用其他成员函数没什么区别：<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">string *sp = new string(&quot;a value&quot;);	// 分配并初始化一个string对象</div><div class="line">sp-&gt;~string();</div></pre></td></tr></table></figure></p>
+<p>调用析构函数会销毁对象，但是不会释放内存。</p>
 <p>这里我们可以这么理解，new表达式(new operator)其实可以分解为两部，即先调用new操作符(operator new)申请内存，再调用placement new来初始化对象。</p>
 <p>来看一个例子，例子中对3个new的用法都做了举例：<br><figure class="highlight cpp"><table><tr><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;new&gt;</span>      <span class="comment">// for placement new</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span>   <span class="comment">// for string</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span> <span class="comment">// for cout</span></span></div><div class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">void</span>* buffer = ::<span class="keyword">operator</span> <span class="keyword">new</span>(<span class="keyword">sizeof</span>(<span class="built_in">string</span>));  <span class="comment">// operator new</span></div><div class="line">    buffer = <span class="keyword">new</span>(buffer) <span class="built_in">string</span>(<span class="string">"123"</span>);             <span class="comment">// placement new</span></div><div class="line">    <span class="built_in">cout</span> &lt;&lt; *(<span class="built_in">string</span>*)buffer &lt;&lt; <span class="built_in">endl</span>;</div><div class="line"></div><div class="line">    <span class="comment">// equals new operator</span></div><div class="line">    <span class="built_in">string</span>* str = <span class="keyword">new</span> <span class="built_in">string</span>(<span class="string">"123"</span>);</div><div class="line">    <span class="built_in">cout</span> &lt;&lt; *str &lt;&lt; <span class="built_in">endl</span>;</div><div class="line"></div><div class="line">    <span class="keyword">delete</span> str;</div><div class="line">    ::<span class="function"><span class="keyword">operator</span> <span class="title">delete</span><span class="params">(buffer)</span></span>;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h2 id="4-delete的两种用法"><a href="#4-delete的两种用法" class="headerlink" title="4.  delete的两种用法"></a>4.  delete的两种用法</h2><p>与new对应的delete操作符没有3中用法，只有两种，分别是delete表达式(delete operator)和delete操作符(operator delete)。delete表达式和new表达式对应，即我们最常用的delete用法，完成对对象的析构和内存的释放。而delete操作符只用于内存的释放，和c语言中的free相似。<br>那么为什么没有和 placement new对应的那个delete呢？其实是有的。placement new是在指定位置初始化对象，也就是调用了构造函数，因此与之对应的就是析构函数了，只不过它不叫placement delete而已。</p>
-<h2 id="5-什么时候需要用到operator-new和placement-new"><a href="#5-什么时候需要用到operator-new和placement-new" class="headerlink" title="5. 什么时候需要用到operator new和placement new"></a>5. 什么时候需要用到operator new和placement new</h2><p>其实在stl里面的allocator就需要用到，allocator先向系统申请一块指定大小的内存(operator new)然后在这块内存上根据模板类的类型T来调用T的构造函数初始化内存(placement new)。下面是一个简单的allocator实现，画红线部分即为两种new和两种delete的用法。<br><img src="/2016/10/01/cpp-new/1.png" alt="简单的allocator实现" title="简单的allocator实现"></p>
+<h2 id="4-什么时候需要用到operator-new和placement-new"><a href="#4-什么时候需要用到operator-new和placement-new" class="headerlink" title="4. 什么时候需要用到operator new和placement new"></a>4. 什么时候需要用到operator new和placement new</h2><p>如果我们需要把对象的内存分配操作和对象的初始化操作分离开来，就需要用到operator new 和placement new。其实在stl里面allocator就用到了类似的做法，其中allocate负责向系统申请一块指定大小的内存(operator new)，而construct负责在这块内存上根据模板类的类型T来调用T的构造函数初始化内存(placement new)。同理deallocat和destory负责释放内存和析构对象。下面是一个简单的allocator实现，画红线部分即为两种new和两种delete的用法。<br><img src="/2016/10/01/cpp-new/1.png" alt="简单的allocator实现" title="简单的allocator实现"></p>
 
       
     </div>
@@ -140,7 +146,7 @@
     
 
     <footer class="article-footer">
-      <a data-url="http://yosef-gao.github.io/2016/10/01/cpp-new/" data-id="citqmr3gh0001agqf04wf5jpr" class="article-share-link">
+      <a data-url="http://yosef-gao.github.io/2016/10/01/cpp-new/" data-id="citwaumsu000118qf9dkkaxsp" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a>
       
@@ -180,7 +186,7 @@
 <p>Graduate student of Zhejiang University of technology.</p>
 <p>Major in Image and Graphics. Mainly use c/c++, familiar with c#.</p>
 <p>I’m now learing server development.</p>
-<p><i class="fa fa-user fa-fw"></i> <em>yosef gao</em><br><i class="fa fa-graduation-cap fa-fw"></i> <em>ZJUT</em><br><i class="fa fa-wechat fa-fw"></i> <em>perfect_means_shit</em><br><i class="fa fa-envelope fa-fw"></i> <a href="&#109;&#97;&#105;&#x6c;&#116;&#111;&#58;&#x31;&#48;&#x33;&#51;&#49;&#51;&#x31;&#54;&#54;&#48;&#x40;&#x71;&#x71;&#x2e;&#99;&#x6f;&#x6d;">&#x31;&#48;&#x33;&#51;&#49;&#51;&#x31;&#54;&#54;&#48;&#x40;&#x71;&#x71;&#x2e;&#99;&#x6f;&#x6d;</a></p>
+<p><i class="fa fa-user fa-fw"></i> <em>yosef gao</em><br><i class="fa fa-graduation-cap fa-fw"></i> <em>ZJUT</em><br><i class="fa fa-wechat fa-fw"></i> <em>perfect_means_shit</em><br><i class="fa fa-envelope fa-fw"></i> <a href="&#x6d;&#97;&#x69;&#x6c;&#116;&#111;&#x3a;&#x31;&#x30;&#51;&#x33;&#49;&#x33;&#x31;&#54;&#x36;&#x30;&#64;&#113;&#113;&#x2e;&#99;&#x6f;&#109;">&#x31;&#x30;&#51;&#x33;&#49;&#x33;&#x31;&#54;&#x36;&#x30;&#64;&#113;&#113;&#x2e;&#99;&#x6f;&#109;</a></p>
 
 </div>
 
