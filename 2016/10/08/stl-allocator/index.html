@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>STL allocator(1) | Fantacity</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="最近看侯捷侯老师的《STL源码剖析》一书（下称STL书），在此对书中内容做个整理，加深印象。stl的六个主要部件分别为：allocator（空间配置器），iterators（迭代器），containers（容器），algorithms（算法），functors（仿函数）以及adapters（适配器）。这里先对allocator做一下总结。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="STL allocator(1)">
+<meta property="og:url" content="http://yosef-gao.github.io/2016/10/08/stl-allocator/index.html">
+<meta property="og:site_name" content="Fantacity">
+<meta property="og:description" content="最近看侯捷侯老师的《STL源码剖析》一书（下称STL书），在此对书中内容做个整理，加深印象。stl的六个主要部件分别为：allocator（空间配置器），iterators（迭代器），containers（容器），algorithms（算法），functors（仿函数）以及adapters（适配器）。这里先对allocator做一下总结。">
+<meta property="og:image" content="http://yosef-gao.github.io/2016/10/08/stl-allocator/headers.png">
+<meta property="og:image" content="http://yosef-gao.github.io/2016/10/08/stl-allocator/cst_dst.png">
+<meta property="og:image" content="http://yosef-gao.github.io/2016/10/08/stl-allocator/1.png">
+<meta property="og:image" content="http://yosef-gao.github.io/2016/10/08/stl-allocator/2.png">
+<meta property="og:updated_time" content="2016-10-08T07:47:32.120Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="STL allocator(1)">
+<meta name="twitter:description" content="最近看侯捷侯老师的《STL源码剖析》一书（下称STL书），在此对书中内容做个整理，加深印象。stl的六个主要部件分别为：allocator（空间配置器），iterators（迭代器），containers（容器），algorithms（算法），functors（仿函数）以及adapters（适配器）。这里先对allocator做一下总结。">
+<meta name="twitter:image" content="http://yosef-gao.github.io/2016/10/08/stl-allocator/headers.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Fantacity" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.ico">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="/css/styles.css">
+  
+
+</head>
+
+<body>
+  <nav class="navbar navbar-inverse">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="main-menu-navbar">
+      <ul class="nav navbar-nav">
+        
+          <li><a class=""
+                 href="/index.html">Home</a></li>
+        
+          <li><a class=""
+                 href="/archives/">Archives</a></li>
+        
+          <li><a class=""
+                 href="https://github.com/yosef-gao">Github</a></li>
+        
+          <li><a class=""
+                 href="/about/aboutme.html">About Me</a></li>
+        
+          <li><a class=""
+                 href="/Links/index.html">Links</a></li>
+        
+      </ul>
+
+      <!--
+      <ul class="nav navbar-nav navbar-right">
+        
+          <li><a href="/atom.xml" title="RSS Feed"><i class="fa fa-rss"></i></a></li>
+        
+      </ul>
+      -->
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+  <div class="container">
+    <div class="blog-header">
+  <h1 class="blog-title">Fantacity</h1>
+  
+    <p class="lead blog-description">Stand Alone Complex</p>
+  
+</div>
+
+    <div class="row">
+        <div class="col-sm-8 blog-main">
+          <article id="post-stl-allocator" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
+    
+  
+    <h1 class="article-title" itemprop="name">
+      STL allocator(1)
+    </h1>
+  
+
+
+  </header>
+
+  <div class="article-meta">
+    <div class="article-datetime">
+  <a href="/2016/10/08/stl-allocator/" class="article-date"><time datetime="2016-10-08T07:47:32.000Z" itemprop="datePublished">2016-10-08</time></a>
+</div>
+
+    <div class="article-author">yosef gao</div>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Program/">Program</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近看侯捷侯老师的《STL源码剖析》一书（下称STL书），在此对书中内容做个整理，加深印象。stl的六个主要部件分别为：allocator（空间配置器），iterators（迭代器），containers（容器），algorithms（算法），functors（仿函数）以及adapters（适配器）。这里先对allocator做一下总结。<br><a id="more"></a></p>
+<h2 id="概览"><a href="#概览" class="headerlink" title="概览"></a>概览</h2><p>由于STL实现版本之多，因此STL书主要以SGI STL这一实现为源码来分析。SGI STL中吧allocator定义于<memory>之中，有三个文件，分别是：<br><figure class="highlight plain"><table><tr><td class="code"><pre><div class="line">#include &lt;stl_alloc.h&gt;		// 负责内存空间的配置与释放</div><div class="line">#include &lt;stl_construct.h&gt;	// 负责对象内容的构造与析构</div><div class="line">#include &lt;stl_uninitialized.h&gt;	// 定义了一些全局函数，用来填充或复制大块内存数据</div></pre></td></tr></table></figure></memory></p>
+<p>那么为什么要把内存分配以及对象的初始化（或者对象的析构和内存的释放）这两个步骤分离开来，直接使用new表达式不好吗？我的理解是这样的：<strong>是为了能提升效率</strong>。</p>
+<p>首先从<strong>内存分配</strong>来说，我们有时会遇到只需要申请内存，但并不需要（或者暂时不需要）初始化的情况，比如下文会提到的sgi alloc的两级配置，其中第一级专门负责配置小块的内存(&lt;128Bytes)，如果小块的内存直接向系统申请，那么时间一长很容易造成内存碎片，使得内存无法得到高效利用。</p>
+<p>alloc的做法是先向系统申请一块大的内存池，然后再通过内存池向stl分配小块的内存，而大块的内存依旧使用普通的分配方式。直观地理解，这么做提高了内存的使用效率。</p>
+<p>在来看<strong>对象析构</strong>方面，有些对象在析构的时候需要做一些额外的事情，比如有一个文件对象，那么我们在析构的时候还需要关闭文件句柄。但是有些对象在析构的时候其实什么事情都不需要做，这个时候就没必要调用对象的析构函数，直接释放内存就好了。所以sgi把对象的析构和内存的释放这两步分离开来，通过判断<em>has_non_trivial_destructor</em>来判断是否需要调用对象的析构函数，以提高效率。</p>
+<p>来看一张关于这3个头文件分别做了什么的图<br><img src="/2016/10/08/stl-allocator/headers.png" alt="headers" title="headers"></p>
+<h2 id="construct和destroy"><a href="#construct和destroy" class="headerlink" title="construct和destroy"></a>construct和destroy</h2><p>首先来看一下<stl_construct.h>的部分内容。该文件内主要定义了两类全局模板函数：construct()函数和destroy()函数，分别用于对象的构造和析构。下图是对construct和destroy的一个整体概览。<br><img src="/2016/10/08/stl-allocator/cst_dst.png" alt="constructor()和destroy()" title="constructor()和destroy()"><br>constructor有一个泛化的版本。对于destroy有一个泛化的版本以及对两个字符串指针<code>char*</code> <code>wchar_t*</code>和一个原生指针类型<code>T*</code>的特化版本。而泛型版本又根据是否有non-trivial destructor特化出了两个版本。看一下源码。<br><img src="/2016/10/08/stl-allocator/1.png" alt="code" title="code"><br><img src="/2016/10/08/stl-allocator/2.png" alt="code" title="code"><br>那么为什么要这么做呢，主要是从效率考虑的，首先对于字符串类型，我们不需要调用析构函数，对于原生指针类型，直接调用其析构函数就可以了。<br>然后再来看剩下的情况，对于接受两个迭代器类型的版本，根据<code>value_type()</code><a href="/2016/10/05/cpp-traits/">Traits(萃取)</a>出它的类型T，再使用<code>__type_traits&lt;T&gt;::has_trivial_destructor</code>萃取出该类是否含有<code>non-trivial destructor</code>，如果有，那么需要依次调用destructor，如果只含有trivial destructor，那么什么都不用做。</stl_construct.h></p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://yosef-gao.github.io/2016/10/08/stl-allocator/" data-id="ciu0x7czj000864qfrz7yo4fz" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/stl/">stl</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2016/10/05/cpp-traits/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">STL中的Traits编程技巧</span>
+    </a>
+  </li>
+  
+  
+  <li role="presentation">
+    <a href="/2016/10/08/stl-allocator-2/" id="article-nav-newer" class="article-nav-link-wrap">
+      <span class="article-nav-link-title">stl allocator(2)</span>
+      <i class="fa fa-chevron-right pull-right"></i>
+    </a>
+  </li>
+  
+</ul>
+
+
+  
+</article>
+
+
+
+
+        </div>
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+          
+  <div class="sidebar-module sidebar-module-inset">
+  <h4>About</h4>
+  <p>Hi, I am yosef gao.</p>
+<p>Graduate student of Zhejiang University of technology.</p>
+<p>Major in Image and Graphics. Mainly use c/c++, familiar with c#.</p>
+<p>I’m now learing server development.</p>
+<p><i class="fa fa-user fa-fw"></i> <em>yosef gao</em><br><i class="fa fa-graduation-cap fa-fw"></i> <em>ZJUT</em><br><i class="fa fa-wechat fa-fw"></i> <em>perfect_means_shit</em><br><i class="fa fa-envelope fa-fw"></i> <a href="&#x6d;&#x61;&#x69;&#108;&#116;&#111;&#x3a;&#49;&#48;&#x33;&#51;&#x31;&#51;&#49;&#x36;&#x36;&#48;&#64;&#x71;&#x71;&#46;&#99;&#111;&#109;">&#49;&#48;&#x33;&#51;&#x31;&#51;&#49;&#x36;&#x36;&#48;&#64;&#x71;&#x71;&#46;&#99;&#111;&#109;</a></p>
+
+</div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Categories</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Algorithm/">Algorithm</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/ComputerScience/">ComputerScience</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Image-and-Grapgics/">Image and Grapgics</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Linux/">Linux</a><span class="sidebar-module-list-count">12</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Others/">Others</a><span class="sidebar-module-list-count">6</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Program/">Program</a><span class="sidebar-module-list-count">11</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/categories/Tools/">Tools</a><span class="sidebar-module-list-count">1</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tags</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/OS/">OS</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/bfs/">bfs</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/c/">c#</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/c-c/">c/c++</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/dfs/">dfs</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/dynamic-programming/">dynamic programming</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/file-system/">file system</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/hexo/">hexo</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/image-processing/">image processing</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/interview/">interview</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/json/">json</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/linux/">linux</a><span class="sidebar-module-list-count">13</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/markdown/">markdown</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/python/">python</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/shell/">shell</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/stl/">stl</a><span class="sidebar-module-list-count">3</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/tags/zjut/">zjut</a><span class="sidebar-module-list-count">3</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Tag Cloud</h4>
+    <p class="tagcloud">
+      <a href="/tags/OS/" style="font-size: 10px;">OS</a> <a href="/tags/bfs/" style="font-size: 10px;">bfs</a> <a href="/tags/c/" style="font-size: 10px;">c#</a> <a href="/tags/c-c/" style="font-size: 17.5px;">c/c++</a> <a href="/tags/dfs/" style="font-size: 10px;">dfs</a> <a href="/tags/dynamic-programming/" style="font-size: 10px;">dynamic programming</a> <a href="/tags/file-system/" style="font-size: 12.5px;">file system</a> <a href="/tags/hexo/" style="font-size: 10px;">hexo</a> <a href="/tags/image-processing/" style="font-size: 12.5px;">image processing</a> <a href="/tags/interview/" style="font-size: 10px;">interview</a> <a href="/tags/json/" style="font-size: 12.5px;">json</a> <a href="/tags/linux/" style="font-size: 20px;">linux</a> <a href="/tags/markdown/" style="font-size: 10px;">markdown</a> <a href="/tags/python/" style="font-size: 12.5px;">python</a> <a href="/tags/shell/" style="font-size: 15px;">shell</a> <a href="/tags/stl/" style="font-size: 15px;">stl</a> <a href="/tags/zjut/" style="font-size: 15px;">zjut</a>
+    </p>
+  </div>
+
+
+  
+  <div class="sidebar-module">
+    <h4>Archives</h4>
+    <ul class="sidebar-module-list"><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/10/">October 2016</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/09/">September 2016</a><span class="sidebar-module-list-count">1</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/08/">August 2016</a><span class="sidebar-module-list-count">2</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/07/">July 2016</a><span class="sidebar-module-list-count">8</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/06/">June 2016</a><span class="sidebar-module-list-count">7</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/04/">April 2016</a><span class="sidebar-module-list-count">5</span></li><li class="sidebar-module-list-item"><a class="sidebar-module-list-link" href="/archives/2016/03/">March 2016</a><span class="sidebar-module-list-count">7</span></li></ul>
+  </div>
+
+
+
+  
+  <div class="sidebar-module">
+    <h4>Recents</h4>
+    <ul class="sidebar-module-list">
+      
+        <li>
+          <a href="/2016/10/08/stl-allocator-2/">stl allocator(2)</a>
+        </li>
+      
+        <li>
+          <a href="/2016/10/08/stl-allocator/">STL allocator(1)</a>
+        </li>
+      
+        <li>
+          <a href="/2016/10/05/cpp-traits/">STL中的Traits编程技巧</a>
+        </li>
+      
+        <li>
+          <a href="/2016/10/01/cpp-new/">C++当中3种new的用法</a>
+        </li>
+      
+        <li>
+          <a href="/2016/10/01/zjut-flower/">工大10月的波斯菊</a>
+        </li>
+      
+    </ul>
+  </div>
+
+
+
+        </div>
+    </div>
+  </div>
+  <footer class="blog-footer">
+  <div class="container">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Yosef Gao<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+  
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js" integrity="sha384-8gBf6Y4YYq7Jx97PIqmTwLPin4hxIzQw5aDmUg/DDhul9fFpbbLcLh3nTIIDJKhx" crossorigin="anonymous"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+</body>
+</html>
