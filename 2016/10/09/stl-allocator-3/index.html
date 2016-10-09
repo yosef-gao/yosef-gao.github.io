@@ -3,14 +3,21 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Archives: 2016/9 | Fantacity</title>
+  <title>STL allocator(3) | Fantacity</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Fantacity">
-<meta property="og:url" content="http://yosef-gao.github.io/archives/2016/09/index.html">
+  <meta name="description" content="接下来看一下第二级配置器最主要的两个部件：refill机制和内存池(memory pool)。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="STL allocator(3)">
+<meta property="og:url" content="http://yosef-gao.github.io/2016/10/09/stl-allocator-3/index.html">
 <meta property="og:site_name" content="Fantacity">
+<meta property="og:description" content="接下来看一下第二级配置器最主要的两个部件：refill机制和内存池(memory pool)。">
+<meta property="og:image" content="http://yosef-gao.github.io/2016/10/09/stl-allocator-3/refill.png">
+<meta property="og:image" content="http://yosef-gao.github.io/2016/10/09/stl-allocator-3/chunck.png">
+<meta property="og:updated_time" content="2016-10-09T13:06:16.579Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Fantacity">
+<meta name="twitter:title" content="STL allocator(3)">
+<meta name="twitter:description" content="接下来看一下第二级配置器最主要的两个部件：refill机制和内存池(memory pool)。">
+<meta name="twitter:image" content="http://yosef-gao.github.io/2016/10/09/stl-allocator-3/refill.png">
   
     <link rel="alternate" href="/atom.xml" title="Fantacity" type="application/atom+xml">
   
@@ -51,7 +58,7 @@
           <li><a class=""
                  href="/index.html">Home</a></li>
         
-          <li><a class="active"
+          <li><a class=""
                  href="/archives/">Archives</a></li>
         
           <li><a class=""
@@ -86,40 +93,82 @@
 
     <div class="row">
         <div class="col-sm-8 blog-main">
-          
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2016" class="archive-year">2016</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-new">
-  <header class="archive-article-header">
+          <article id="post-stl-allocator-3" class="article article-type-post" itemscope itemprop="blogPost">
+
+  <header class="article-header">
     
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/09/27/cpp-vptr-and-vtable/">C++虚函数的实现探究——vptr和vtable</a>
+    <h1 class="article-title" itemprop="name">
+      STL allocator(3)
     </h1>
   
 
 
+  </header>
+
+  <div class="article-meta">
     <div class="article-datetime">
-  <a href="/2016/09/27/cpp-vptr-and-vtable/" class="archive-article-date"><time datetime="2016-09-27T06:13:30.000Z" itemprop="datePublished">September 27th</time></a>
+  <a href="/2016/10/09/stl-allocator-3/" class="article-date"><time datetime="2016-10-09T13:06:16.000Z" itemprop="datePublished">2016-10-09</time></a>
 </div>
 
-  </header>
-</article>
+    <div class="article-author">yosef gao</div>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Program/">Program</a>
+  </div>
+
+
+  </div>
+  <div class="article-inner">
+
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>接下来看一下第二级配置器最主要的两个部件：refill机制和内存池(memory pool)。<br><a id="more"></a></p>
+<h2 id="refill机制"><a href="#refill机制" class="headerlink" title="refill机制"></a>refill机制</h2><p>refill机制的工作时机为，当free-list对应的大小位置没有可用的区块时，就调用refill函数来重新补充节点，新的空间将取自内存池（经由chunk_alloc()完成）。缺省取得20个新节点，但万一内存池空间不足，获得的节点数可能小于20，下面是refill的代码。<br><img src="/2016/10/09/stl-allocator-3/refill.png" alt="refill函数" title="refill函数"><br>refill()函数通过chunk_alloc()函数获得可用的内存块，把第一个返回给客户端，剩余的n-1个(n-1 &gt;= 0 &amp;&amp; n - 1 &lt;= 19)依次链接放入对应的free-list位置，供下次使用。注意，这里的chunk_alloc()返回的地址<strong>至少有1个可用的块</strong>，如果一个可用的块都没有，那么还是不会返回，而是直接抛出异常，在下面会详细描述。</p>
+<h2 id="内存池-memory-pool"><a href="#内存池-memory-pool" class="headerlink" title="内存池(memory pool)"></a>内存池(memory pool)</h2><p>从内存池中取空间个free-list使用，是chunk_alloc()的工作：<br><img src="/2016/10/09/stl-allocator-3/chunck.png" alt="chunck_alloc代码" title="chunck_alloc代码"><br>我们一点点来代码，首先是<code>if (bytes_left &gt;= total_bytes)</code>的情况下，那么把内存池的起始地址往后移动total_bytes的量，并返回先前的内存池起始地址，代表把这一块内存分配出去了。</p>
+<p>接着是<code>else if (bytes_left &gt;= size)</code>表示内存是有剩余一个以上，但是小于20个的区块，这个时候也把这些区块分配出去。但是要修改nobjs的值，因为nobjs是传引用，客户端需要知道到底分配了几个区块。</p>
+<p>下面的情况就是<code>bytes_left &lt; size</code>表示内存池剩余空间连一个也不够分配了。首先计算<code>bytes_to_get</code>他的值为需求量的两倍加上一个每<strong>随分配次数而增加的附加量</strong>。在这之前，如果<code>if (bytes_left &gt; 0)</code>先把内存池剩余零头先分配出去，放入适合的free-list中。（可以看到，这种情况下，内存池中的剩余量rest必然满足0 &lt; rest &lt; size），所以可以放入到某个合适的free-list当中最为某个节点。</p>
+<p>接下去通过malloc来分配所需的内存，如果malloc成功，则修正<code>start_free</code> 和 <code>end_free</code>的值，并递归调用chunck_alloc()来重新分配内存块。否则如果malloc失败的话，可见系统内存已经给不出这么多内存了，这个时候尝试在free-list当中寻找空余的的内存块，把他们重新回收回来，并分配给急需使用的free-list（回收之后递归调用chunck_alloc()）。</p>
+<p>如果连这样也失败的话，已经没有内存可以用了，这个时候调用第一级配置器，尝试触发oom机制来获取可用的内存，如果失败则抛出异常，程序结束；如果成功则又有可用的内存补充进来了，接下去仍然递归调用chunck_alloc()来修正nobjs。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>至此，我们把std::alloc都讲完了。再来梳理一下，std::alloc包括两级配置器，第一级配置器直接使用malloc和free来分配和释放内存，第二级配置器对于大于182bytes的内存申请直接调用第一级配置器，否则的话从free-list当中取出符合的节点分配出去。而free-list的节点则从内存池中补充，从而在一定程度上避免了大量的小内存申请造成的内存碎片化问题。</p>
+<p>如果stl定义了__USE_MALLOC，则使用第一级配置器，否则使用第二级配置器。SGI默认使用第二级配置器。</p>
+
+      
+    </div>
+
+    
+      
+
+    
+
+    <footer class="article-footer">
+      <a data-url="http://yosef-gao.github.io/2016/10/09/stl-allocator-3/" data-id="ciu2n8mvf000dsoqfcpym5kw5" class="article-share-link">
+        <i class="fa fa-share"></i> Share
+      </a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/stl/">stl</a></li></ul>
+
+
+    </footer>
+  </div>
+  
+    
+<ul id="article-nav" class="nav nav-pills nav-justified">
+  
+  <li role="presentation">
+    <a href="/2016/10/08/stl-allocator-2/" id="article-nav-older" class="article-nav-link-wrap">
+      <i class="fa fa-chevron-left pull-left"></i>
+      <span class="article-nav-link-title">stl allocator(2)</span>
+    </a>
+  </li>
+  
+  
+</ul>
+
 
   
-  
-    </div></section>
-  
+</article>
 
 
 
