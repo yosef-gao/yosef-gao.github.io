@@ -11,7 +11,7 @@
 <meta property="og:url" content="http://yosef-gao.github.io/2018/01/13/Ebookchain-deploy/index.html">
 <meta property="og:site_name" content="Fantacity">
 <meta property="og:description" content="记录部署亿书(Ebookchain)时候遇到的一些坑。">
-<meta property="og:updated_time" content="2018-01-13T08:48:35.480Z">
+<meta property="og:updated_time" content="2018-01-13T08:52:18.560Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="亿书(Ebookchain)部署">
 <meta name="twitter:description" content="记录部署亿书(Ebookchain)时候遇到的一些坑。">
@@ -137,10 +137,11 @@
 <p>其中ebookcoin-js通过git+ssh下载可能会很慢，需要有一定耐心。【官方文档注】：如果遇到权限拒绝错误，如：Error: Permission denied (publickey)?，是你没有配置好使用ssh访问github，请参考这里的<a href="https://help.github.com/articles/error-permission-denied-publickey/" target="_blank" rel="external">文档</a>。</p>
 <h2 id="构建前端"><a href="#构建前端" class="headerlink" title="构建前端:"></a>构建前端:</h2><p>这一步可以和加载 git 子模块一起进行，节约时间。</p>
 <p>进入public目录<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ <span class="built_in">cd</span> public</div></pre></td></tr></table></figure></p>
-<p>打开package.json,修改一下几行：<br><code>&quot;angular-resource&quot;: &quot;latest&quot;   =&gt;   &quot;angular-resource&quot;: &quot;~1.2.8&quot;,</code><br><code>&quot;angular-route&quot;: &quot;latest&quot;,     =&gt;   &quot;angular-route&quot;: &quot;~1.2.8&quot;,</code><br><code>&quot;angular-filter&quot;: &quot;latest&quot;,    =&gt;   &quot;angular-filter&quot;: &quot;0.5.16&quot;,</code><br>还是这个文件，添加一下几行：<br><code>&quot;angular-gettext-tools&quot;: &quot;2.3.7&quot;,</code><br><code>&quot;less&quot;: &quot;1.7.5&quot;,</code><br><code>&quot;angular-filter&quot;: &quot;latest&quot;,</code><br><strong>这里less不要用最新版的（目前是2.7.3），会报错</strong>.</p>
+<p>打开package.json,修改以下几行：<br><code>&quot;angular-resource&quot;: &quot;latest&quot;   =&gt;   &quot;angular-resource&quot;: &quot;~1.2.8&quot;,</code><br><code>&quot;angular-route&quot;: &quot;latest&quot;,     =&gt;   &quot;angular-route&quot;: &quot;~1.2.8&quot;,</code><br><code>&quot;angular-filter&quot;: &quot;latest&quot;,    =&gt;   &quot;angular-filter&quot;: &quot;0.5.16&quot;,</code></p>
+<p>还是这个文件，添加以下几行：<br><code>&quot;angular-gettext-tools&quot;: &quot;2.3.7&quot;,</code><br><code>&quot;less&quot;: &quot;1.7.5&quot;,</code><br><code>&quot;angular-filter&quot;: &quot;latest&quot;,</code><br><strong>这里less不要用最新版的（目前是2.7.3），会报错</strong>.</p>
 <p>接下来开始安装前端node模块：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ npm install</div></pre></td></tr></table></figure></p>
-<p>安装完毕之后，再把<br><code>ebookcoin/public/node_modules/_is-buffer@1.1.6@is-buffer</code><br>文件夹复制到<br><code>ebookcoin/_is-buffer@1.1.6@is-buffer</code><br>对就是这么<strong>奇葩</strong>，不然会报一个<br><code>Error: Cannot find module &#39;../../../../_is-buffer@1.1.6@is-buffer/index.js&#39;</code>的错误。</p>
-<p>然后开始构建前端吧：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ bower install</div><div class="line">$ grunt release</div></pre></td></tr></table></figure></p>
+<p>安装完毕之后，再把<br><code>ebookcoin/public/node_modules/_is-buffer@1.1.6@is-buffer</code><br>文件夹复制到<br><code>ebookcoin/_is-buffer@1.1.6@is-buffer</code><br>对，就是这么<strong>奇葩</strong>，不然会报一个<br><code>Error: Cannot find module &#39;../../../../_is-buffer@1.1.6@is-buffer/index.js&#39;</code>的错误。</p>
+<p>然后开始构建前端：<br><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ bower install</div><div class="line">$ grunt release</div></pre></td></tr></table></figure></p>
 <h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><figure class="highlight bash"><table><tr><td class="code"><pre><div class="line">$ <span class="built_in">cd</span> ..</div><div class="line">$ node app.js</div></pre></td></tr></table></figure>
 
       
@@ -152,7 +153,7 @@
     
 
     <footer class="article-footer">
-      <a data-url="http://yosef-gao.github.io/2018/01/13/Ebookchain-deploy/" data-id="cjcd40sc7003crhqf5863gzx3" class="article-share-link">
+      <a data-url="http://yosef-gao.github.io/2018/01/13/Ebookchain-deploy/" data-id="cjcd44hru003iscqfyv9rt7gf" class="article-share-link">
         <i class="fa fa-share"></i> Share
       </a>
       
@@ -192,7 +193,7 @@
 <p>Graduate student of Zhejiang University of technology.</p>
 <p>Major in Image and Graphics. Mainly use c/c++, familiar with c#.</p>
 <p>I’m now learing server development.</p>
-<p><i class="fa fa-user fa-fw"></i> <em>yosef gao</em><br><i class="fa fa-graduation-cap fa-fw"></i> <em>ZJUT</em><br><i class="fa fa-wechat fa-fw"></i> <em>perfect_means_shit</em><br><i class="fa fa-envelope fa-fw"></i> <a href="&#109;&#x61;&#105;&#x6c;&#x74;&#111;&#58;&#x31;&#48;&#x33;&#51;&#x31;&#51;&#x31;&#x36;&#x36;&#48;&#x40;&#x71;&#x71;&#x2e;&#x63;&#111;&#109;">&#x31;&#48;&#x33;&#51;&#x31;&#51;&#x31;&#x36;&#x36;&#48;&#x40;&#x71;&#x71;&#x2e;&#x63;&#111;&#109;</a></p>
+<p><i class="fa fa-user fa-fw"></i> <em>yosef gao</em><br><i class="fa fa-graduation-cap fa-fw"></i> <em>ZJUT</em><br><i class="fa fa-wechat fa-fw"></i> <em>perfect_means_shit</em><br><i class="fa fa-envelope fa-fw"></i> <a href="&#x6d;&#97;&#x69;&#x6c;&#x74;&#x6f;&#58;&#49;&#48;&#x33;&#x33;&#x31;&#51;&#x31;&#54;&#54;&#48;&#x40;&#x71;&#x71;&#46;&#99;&#111;&#109;">&#49;&#48;&#x33;&#x33;&#x31;&#51;&#x31;&#54;&#54;&#48;&#x40;&#x71;&#x71;&#46;&#99;&#111;&#109;</a></p>
 
 </div>
 
